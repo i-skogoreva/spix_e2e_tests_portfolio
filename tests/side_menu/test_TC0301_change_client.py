@@ -10,6 +10,7 @@ locator = ClientFilterLocators()
 assertion = Assertions()
 
 
+@allure.parent_suite("side_menu")
 @allure.suite("TS-03 Смена клиента")
 class TestTS03ClientManagement:
 
