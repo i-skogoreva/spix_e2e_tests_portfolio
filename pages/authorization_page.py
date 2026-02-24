@@ -40,3 +40,22 @@ class UserAuthorizationPage(BasePage):
 
     def get_country_flag_class(self, locator):
          return self.get_attribute(locator.COUNTRY_FLAG_LOC, "class")
+
+    def select_language(self, locator, language_name):
+         self.page.locator(locator.LANG_DROPDOWN_TOGGLE_LOC).dispatch_event("mousedown")
+         self.page.locator(locator.LANG_OPTION_LOC, has_text=language_name).click()
+
+    def get_signin_title(self, locator):
+         return self.page.locator(locator.SIGNIN_TITLE_LOC).first.text_content()
+
+    def get_signin_description(self, locator):
+         return self.page.locator(locator.SIGNIN_DESCRIPTION_LOC).first.text_content()
+
+    def get_phone_label(self, locator):
+         return self.get_text(locator.PHONE_LABEL_LOC)
+
+    def get_password_label(self, locator):
+         return self.get_text(locator.PASSWORD_LABEL_LOC)
+
+    def get_recover_pass_text(self, locator):
+         return self.get_text(locator.RECOVER_PASS_LOC)

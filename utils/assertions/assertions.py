@@ -8,3 +8,13 @@ class Assertions:
     def assert_url(self, actual_url, expected_url):
         assert actual_url == expected_url, (f"Не удалось попасть на страницу."
                                               f"Ожидали {expected_url}, получили {actual_url}")
+
+    def assert_page_texts(self, actual_texts, expected_texts):
+        mismatches = []
+        for key, expected in expected_texts.items():
+            actual = actual_texts.get(key)
+            if actual != expected:
+                mismatches.append(f"  {key}: ожидали '{expected}', получили '{actual}'")
+        assert not mismatches, (
+            f"Тексты страницы не соответствуют ожидаемым:\n" + "\n".join(mismatches)
+        )

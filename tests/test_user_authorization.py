@@ -128,3 +128,26 @@ class TestUserAuthorization:
         with allure.step("Verify flag changed to Kazakhstan"):
             flag_class = auth_page.get_country_flag_class(self.locator)
             self.assertions.assert_text(flag_class, self.data.KAZAKHSTAN_FLAG_CLASS)
+
+    @allure.title("TC-0008: Language switch changes page texts [{language}]")
+    @allure.description("Verify that switching language updates all page texts to the selected language")
+    @allure.severity(allure.severity_level.NORMAL)
+    @pytest.mark.parametrize("language", ["English", "Indonesia", "Русский"],
+                             ids=["english", "indonesia", "russian"])
+    def test_tc_0008_language_switch(self, page, language):
+        with allure.step("Open authorization page"):
+            full_url = self.data.BASE_URL + self.endpoint.AUTHORIZATION_USER_ENDPOINT
+            auth_page = UserAuthorizationPage(page, full_url)
+            auth_page.open()
+        with allure.step(f"Switch language to {language}"):
+            auth_page.select_language(self.locator, language)
+        with allure.step(f"Verify page texts match {language} translation"):
+            expected = self.data.LANG_TRANSLATIONS[language]
+            actual_texts = {
+                "title": auth_page.get_signin_title(self.locator),
+                "description": auth_page.get_signin_description(self.locator),
+                "phone_label": auth_page.get_phone_label(self.locator),
+                "password_label": auth_page.get_password_label(self.locator),
+                "recover_pass": auth_page.get_recover_pass_text(self.locator),
+            }
+            self.assertions.assert_page_texts(actual_texts, expected)

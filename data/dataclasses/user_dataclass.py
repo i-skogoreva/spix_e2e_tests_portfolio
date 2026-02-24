@@ -17,3 +17,27 @@ class UserData:
     ERROR_MESSAGE_PASSWORD = "Incorrect username or password"
     KAZAKHSTAN_PHONE_PLACEHOLDER = "+7 771 000 9998"
     KAZAKHSTAN_FLAG_CLASS = "vti__flag kz"
+
+    LANG_TRANSLATIONS = {
+        "English": {
+            "title": "Sign in",
+            "description": "Enter your phone and password to log in",
+            "phone_label": "Phone number",
+            "password_label": "Password",
+            "recover_pass": "Recover password",
+        },
+        "Indonesia": {
+            "title": "Masuk",
+            "description": "Masukkan nomor ponsel dan kata sandi Anda untuk masuk",
+            "phone_label": "Nomor telepon",
+            "password_label": "Kata sandi",
+            "recover_pass": "Pulihkan kata sandi",
+        },
+        "Русский": {
+            "title": "Авторизация",
+            "description": "Введите телефон и пароль, чтобы войти в систему",
+            "phone_label": "Телефон",
+            "password_label": "Пароль",
+            "recover_pass": "Восстановить пароль",
+        },
+    }
