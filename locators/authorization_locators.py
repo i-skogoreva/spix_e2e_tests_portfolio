@@ -23,3 +23,7 @@ class UserAuthorization:
     CODE_SENT_LOC = ".signin__form-code-sent"
     RESEND_TIMER_LOC = ".signin__form-resending"
     SUPPORT_BTN_LOC = ".support-btn"
+    EMAIL_INPUT_LOC = ".signin__form-email-input"
+    PASS_RECOVERY_SUBMIT_LOC = "button.button-main.signin__pass-recovery"
+    RECOVERY_DESCRIPTION_LOC = ".signin__description"
+    RECOVERY_EMAIL_LOC = ".signin__form-email"

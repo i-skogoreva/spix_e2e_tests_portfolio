@@ -18,6 +18,8 @@ class UserData:
     KAZAKHSTAN_PHONE_PLACEHOLDER = "+7 771 000 9998"
     KAZAKHSTAN_FLAG_CLASS = "vti__flag kz"
     CODE_SENT_TEXT = "Код отправлен"
+    RECOVERY_EMAIL = "test@spix.im"
+    RECOVERY_CONFIRMATION_TEXT = "На ваш email отправлена ссылка для восстановления пароля. Перейдите по ссылке и введите новый пароль."
 
     LANG_TRANSLATIONS = {
         "English": {

@@ -217,3 +217,24 @@ class TestUserAuthorization:
         with allure.step("Verify redirect to password recovery page"):
             expected_url = self.data.BASE_URL + self.endpoint.PASS_RECOVERY_ENDPOINT
             self.assertions.assert_url(page.url, expected_url)
+
+    @allure.title("TC-0013: Password recovery sends confirmation email")
+    @allure.description("Verify that submitting email on password recovery page shows confirmation text and displays the email")
+    @allure.severity(allure.severity_level.NORMAL)
+    def test_tc_0013_password_recovery_confirmation(self, page):
+        with allure.step("Open password recovery page"):
+            full_url = self.data.BASE_URL + self.endpoint.PASS_RECOVERY_ENDPOINT
+            auth_page = UserAuthorizationPage(page, full_url)
+            auth_page.open()
+        with allure.step("Enter email and submit recovery form"):
+            auth_page.submit_recovery_email(self.locator, self.data.RECOVERY_EMAIL)
+        with allure.step("Verify confirmation text and email are displayed"):
+            actual_texts = {
+                "description": auth_page.get_recovery_description(self.locator),
+                "email": auth_page.get_recovery_email(self.locator),
+            }
+            expected_texts = {
+                "description": self.data.RECOVERY_CONFIRMATION_TEXT,
+                "email": self.data.RECOVERY_EMAIL,
+            }
+            self.assertions.assert_page_texts(actual_texts, expected_texts)
