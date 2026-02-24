@@ -151,3 +151,21 @@ class TestUserAuthorization:
                 "recover_pass": auth_page.get_recover_pass_text(self.locator),
             }
             self.assertions.assert_page_texts(actual_texts, expected)
+
+    @allure.title("TC-0009: Return to authorization page from SMS code page")
+    @allure.description("Verify that clicking return button on SMS page navigates back to authorization form")
+    @allure.severity(allure.severity_level.NORMAL)
+    def test_tc_0009_return_from_sms_page(self, page):
+        with allure.step("Open authorization page"):
+            full_url = self.data.BASE_URL + self.endpoint.AUTHORIZATION_USER_ENDPOINT
+            auth_page = UserAuthorizationPage(page, full_url)
+            auth_page.open()
+        with allure.step("Submit valid credentials to reach SMS code page"):
+            auth_page.submit_credentials(
+                self.locator, self.data.SUBADMIN_PHONE_NUMBER, self.data.SUBADMIN_PASSWORD
+            )
+        with allure.step("Click return to authorization button"):
+            auth_page.click_return_to_signin(self.locator)
+        with allure.step("Verify authorization form is displayed"):
+            phone_label = auth_page.get_phone_label(self.locator)
+            self.assertions.assert_text(phone_label, "Телефон")

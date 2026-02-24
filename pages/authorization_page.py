@@ -59,3 +59,13 @@ class UserAuthorizationPage(BasePage):
 
     def get_recover_pass_text(self, locator):
          return self.get_text(locator.RECOVER_PASS_LOC)
+
+    def submit_credentials(self, locator, phone_number, password):
+         self.fill_text(locator.PHONE_FIELD_LOC, phone_number)
+         self.fill_text(locator.PASSWORD_FIELD_LOC, password)
+         self.click_on_elem(locator.SUBMIT_BUTTON_LOC)
+         self.wait_locator(locator.CODE_FIRST_DIGIT_LOC)
+
+    def click_return_to_signin(self, locator):
+         self.click_on_elem(locator.RETURN_TO_SIGNIN_LOC)
+         self.wait_locator(locator.PHONE_LABEL_LOC)

@@ -18,3 +18,4 @@ class UserAuthorization:
     PHONE_LABEL_LOC = ".signin__form-tel-label"
     PASSWORD_LABEL_LOC = ".signin__form-password-label"
     RECOVER_PASS_LOC = ".signin__recover-pass"
+    RETURN_TO_SIGNIN_LOC = ".signin__form-return-signin"
