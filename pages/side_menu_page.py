@@ -56,3 +56,15 @@ class SideMenuPage(BasePage):
         self.page.evaluate("() => clearInterval(window._skeletonInterval)")
         appeared = self.page.evaluate("() => window._skeletonAppeared === true")
         assert appeared, "Скелетон не появился (.loader-wrapper)"
+
+    def click_menu_item_chats(self, loc):
+        """Кликает на пункт меню 'Чаты'"""
+        self.click_on_elem(loc.MENU_ITEM_CHATS)
+
+    def is_chat_page_open(self, loc) -> bool:
+        """Проверяет открытие страницы чатов по наличию заголовка"""
+        return self.page.locator(loc.CHAT_PAGE_TITLE).is_visible()
+
+    def is_sidebar_collapsed(self, loc) -> bool:
+        """Проверяет что боковое меню схлопнулось (нет класса with-sidebar)"""
+        return self.page.locator(loc.SIDEBAR_COLLAPSED).is_visible()

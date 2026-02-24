@@ -16,3 +16,12 @@ class SideMenuLocators:
 
     # Критерий 2: скелетон при загрузке страницы
     SKELETON = ".base-loader"
+
+    # Пункт меню Чаты
+    MENU_ITEM_CHATS = ".item__link-text:has-text('Чаты')"
+
+    # Критерий 1: заголовок страницы чатов
+    CHAT_PAGE_TITLE = ".chat-list__search-wrapper-title"
+
+    # Критерий 2: боковое меню схлопнулось
+    SIDEBAR_COLLAPSED = ".sidebar-wrapper.small"

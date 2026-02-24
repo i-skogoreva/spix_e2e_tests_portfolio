@@ -57,18 +57,17 @@ def authorized_user(playwright: Playwright, get_cookies):
 
 
 @pytest.fixture(scope="session")
-def get_subadmin_cookies(playwright: Playwright):
-    """Авторизует субадмина и возвращает cookies сессии"""
-    phone_number = data.SUBADMIN_PHONE_NUMBER
-    password = data.SUBADMIN_PASSWORD
-    browser = playwright.chromium.launch(headless=False)
+def subadmin_context(playwright: Playwright):
+    """Авторизует субадмина один раз и хранит контекст на всю сессию"""
+    browser = playwright.chromium.launch(headless=False, slow_mo=500)
     context = browser.new_context(
+        viewport=ViewportSize(width=1440, height=980),
         base_url="https://go.dev.spix.ru/"
     )
     page = context.new_page()
     page.goto("/")
-    page.locator(user_authorization.PHONE_FIELD_LOC).fill(phone_number)
-    page.locator(user_authorization.PASSWORD_FIELD_LOC).fill(password)
+    page.locator(user_authorization.PHONE_FIELD_LOC).fill(data.SUBADMIN_PHONE_NUMBER)
+    page.locator(user_authorization.PASSWORD_FIELD_LOC).fill(data.SUBADMIN_PASSWORD)
     page.locator(user_authorization.SUBMIT_BUTTON_LOC).click()
     page.locator(user_authorization.CODE_FIRST_DIGIT_LOC).wait_for(state="visible")
     page.locator(user_authorization.CODE_FIRST_DIGIT_LOC).click()
@@ -77,24 +76,15 @@ def get_subadmin_cookies(playwright: Playwright):
         page.locator(user_authorization.CODE_5DIGITS_LOC).nth(i).fill(data.SMS_CODE[i + 1])
     page.locator(user_authorization.ENTER_BUTTON_LOC).click()
     page.wait_for_url("**/1?**")
-    cookies = context.cookies()
     page.close()
+    yield context
     context.close()
     browser.close()
-    return cookies
 
 
 @pytest.fixture()
-def subadmin_page(playwright: Playwright, get_subadmin_cookies):
-    """Возвращает авторизованную страницу субадмина"""
-    browser = playwright.chromium.launch(headless=False, slow_mo=500)
-    context = browser.new_context(
-        viewport=ViewportSize(width=1440, height=980),
-        base_url="https://go.dev.spix.ru/"
-    )
-    context.add_cookies(get_subadmin_cookies)
-    page = context.new_page()
+def subadmin_page(subadmin_context):
+    """Создаёт новую страницу в уже авторизованном контексте"""
+    page = subadmin_context.new_page()
     yield page
     page.close()
-    context.close()
-    browser.close()
