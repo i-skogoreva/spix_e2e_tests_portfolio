@@ -189,3 +189,17 @@ class TestUserAuthorization:
         with allure.step("Verify code sent confirmation and timer are displayed"):
             code_sent_text = auth_page.get_code_sent_text(self.locator)
             self.assertions.assert_text(code_sent_text, self.data.CODE_SENT_TEXT)
+
+    @allure.title("TC-0011: Support button opens support page")
+    @allure.description("Verify that clicking 'Нужна помощь?' button redirects to the support page")
+    @allure.severity(allure.severity_level.NORMAL)
+    def test_tc_0011_support_button_opens_support_page(self, page):
+        with allure.step("Open authorization page"):
+            full_url = self.data.BASE_URL + self.endpoint.AUTHORIZATION_USER_ENDPOINT
+            auth_page = UserAuthorizationPage(page, full_url)
+            auth_page.open()
+        with allure.step("Click 'Нужна помощь?' button"):
+            auth_page.click_support_btn(self.locator)
+        with allure.step("Verify redirect to support page"):
+            expected_url = self.data.BASE_URL + self.endpoint.SUPPORT_SIGNIN_ENDPOINT
+            self.assertions.assert_url(page.url, expected_url)

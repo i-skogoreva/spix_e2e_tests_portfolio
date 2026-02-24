@@ -22,3 +22,4 @@ class UserAuthorization:
     RESEND_CODE_BTN_LOC = ".signin__form-btn-request-code"
     CODE_SENT_LOC = ".signin__form-code-sent"
     RESEND_TIMER_LOC = ".signin__form-resending"
+    SUPPORT_BTN_LOC = ".support-btn"

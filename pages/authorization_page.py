@@ -82,3 +82,6 @@ class UserAuthorizationPage(BasePage):
 
     def is_resend_timer_visible(self, locator):
          return self.page.locator(locator.RESEND_TIMER_LOC).is_visible()
+
+    def click_support_btn(self, locator):
+         self.click_on_elem(locator.SUPPORT_BTN_LOC)
