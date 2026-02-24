@@ -89,6 +89,9 @@ class UserAuthorizationPage(BasePage):
     def click_recover_pass(self, locator):
          self.click_on_elem(locator.RECOVER_PASS_LOC)
 
+    def click_recovery_return_to_signin(self, locator):
+         self.click_on_elem(locator.RETURN_TO_SIGNIN_LOC)
+
     def submit_recovery_email(self, locator, email):
          self.fill_text(locator.EMAIL_INPUT_LOC, email)
          self.click_on_elem(locator.PASS_RECOVERY_SUBMIT_LOC)

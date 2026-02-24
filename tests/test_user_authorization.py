@@ -238,3 +238,19 @@ class TestUserAuthorization:
                 "email": self.data.RECOVERY_EMAIL,
             }
             self.assertions.assert_page_texts(actual_texts, expected_texts)
+
+    @allure.title("TC-0014: Return to authorization page from password recovery page")
+    @allure.description("Verify that clicking 'Авторизация' link on password recovery page navigates back to signin")
+    @allure.severity(allure.severity_level.NORMAL)
+    def test_tc_0014_return_from_recovery_page(self, page):
+        with allure.step("Open password recovery page"):
+            full_url = self.data.BASE_URL + self.endpoint.PASS_RECOVERY_ENDPOINT
+            auth_page = UserAuthorizationPage(page, full_url)
+            auth_page.open()
+        with allure.step("Click 'Авторизация' link to return"):
+            auth_page.click_recovery_return_to_signin(self.locator)
+        with allure.step("Verify redirect to authorization page"):
+            expected_url = self.data.BASE_URL + self.endpoint.AUTHORIZATION_USER_ENDPOINT
+            self.assertions.assert_url(
+                page.url.rstrip('/'), expected_url.rstrip('/')
+            )
