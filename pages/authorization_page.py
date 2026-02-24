@@ -85,3 +85,6 @@ class UserAuthorizationPage(BasePage):
 
     def click_support_btn(self, locator):
          self.click_on_elem(locator.SUPPORT_BTN_LOC)
+
+    def click_recover_pass(self, locator):
+         self.click_on_elem(locator.RECOVER_PASS_LOC)

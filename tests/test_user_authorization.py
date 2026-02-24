@@ -203,3 +203,17 @@ class TestUserAuthorization:
         with allure.step("Verify redirect to support page"):
             expected_url = self.data.BASE_URL + self.endpoint.SUPPORT_SIGNIN_ENDPOINT
             self.assertions.assert_url(page.url, expected_url)
+
+    @allure.title("TC-0012: Recover password link opens password recovery page")
+    @allure.description("Verify that clicking 'Восстановить пароль' link redirects to the password recovery page")
+    @allure.severity(allure.severity_level.NORMAL)
+    def test_tc_0012_recover_password_link(self, page):
+        with allure.step("Open authorization page"):
+            full_url = self.data.BASE_URL + self.endpoint.AUTHORIZATION_USER_ENDPOINT
+            auth_page = UserAuthorizationPage(page, full_url)
+            auth_page.open()
+        with allure.step("Click 'Восстановить пароль' link"):
+            auth_page.click_recover_pass(self.locator)
+        with allure.step("Verify redirect to password recovery page"):
+            expected_url = self.data.BASE_URL + self.endpoint.PASS_RECOVERY_ENDPOINT
+            self.assertions.assert_url(page.url, expected_url)
