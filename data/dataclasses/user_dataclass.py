@@ -17,6 +17,7 @@ class UserData:
     ERROR_MESSAGE_PASSWORD = "Incorrect username or password"
     KAZAKHSTAN_PHONE_PLACEHOLDER = "+7 771 000 9998"
     KAZAKHSTAN_FLAG_CLASS = "vti__flag kz"
+    CODE_SENT_TEXT = "Код отправлен"
 
     LANG_TRANSLATIONS = {
         "English": {

@@ -69,3 +69,16 @@ class UserAuthorizationPage(BasePage):
     def click_return_to_signin(self, locator):
          self.click_on_elem(locator.RETURN_TO_SIGNIN_LOC)
          self.wait_locator(locator.PHONE_LABEL_LOC)
+
+    def wait_resend_code_available(self, locator):
+         self.wait_locator(locator.RESEND_CODE_BTN_LOC, timeout=70000)
+
+    def click_resend_code(self, locator):
+         self.click_on_elem(locator.RESEND_CODE_BTN_LOC)
+         self.wait_locator(locator.CODE_SENT_LOC)
+
+    def get_code_sent_text(self, locator):
+         return self.get_text(locator.CODE_SENT_LOC).strip()
+
+    def is_resend_timer_visible(self, locator):
+         return self.page.locator(locator.RESEND_TIMER_LOC).is_visible()

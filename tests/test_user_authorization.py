@@ -169,3 +169,23 @@ class TestUserAuthorization:
         with allure.step("Verify authorization form is displayed"):
             phone_label = auth_page.get_phone_label(self.locator)
             self.assertions.assert_text(phone_label, "Телефон")
+
+    @allure.title("TC-0010: Resend SMS code after timer expires")
+    @allure.description("Verify that resending SMS code shows confirmation text and restarts the timer")
+    @allure.severity(allure.severity_level.NORMAL)
+    def test_tc_0010_resend_sms_code(self, page):
+        with allure.step("Open authorization page"):
+            full_url = self.data.BASE_URL + self.endpoint.AUTHORIZATION_USER_ENDPOINT
+            auth_page = UserAuthorizationPage(page, full_url)
+            auth_page.open()
+        with allure.step("Submit valid credentials to reach SMS code page"):
+            auth_page.submit_credentials(
+                self.locator, self.data.SUBADMIN_PHONE_NUMBER, self.data.SUBADMIN_PASSWORD
+            )
+        with allure.step("Wait for resend timer to expire"):
+            auth_page.wait_resend_code_available(self.locator)
+        with allure.step("Click resend code button"):
+            auth_page.click_resend_code(self.locator)
+        with allure.step("Verify code sent confirmation and timer are displayed"):
+            code_sent_text = auth_page.get_code_sent_text(self.locator)
+            self.assertions.assert_text(code_sent_text, self.data.CODE_SENT_TEXT)

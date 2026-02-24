@@ -19,3 +19,6 @@ class UserAuthorization:
     PASSWORD_LABEL_LOC = ".signin__form-password-label"
     RECOVER_PASS_LOC = ".signin__recover-pass"
     RETURN_TO_SIGNIN_LOC = ".signin__form-return-signin"
+    RESEND_CODE_BTN_LOC = ".signin__form-btn-request-code"
+    CODE_SENT_LOC = ".signin__form-code-sent"
+    RESEND_TIMER_LOC = ".signin__form-resending"
