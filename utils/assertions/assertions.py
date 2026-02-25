@@ -8,3 +8,6 @@ class Assertions:
     def assert_url(self, actual_url, expected_url):
         assert actual_url == expected_url, (f"Не удалось попасть на страницу."
                                               f"Ожидали {expected_url}, получили {actual_url}")
+
+    def assert_true(self, condition: bool, message: str):
+        assert condition, message
