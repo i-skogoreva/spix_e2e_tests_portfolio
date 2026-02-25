@@ -69,6 +69,11 @@ class SideMenuPage(BasePage):
         """Проверяет что боковое меню схлопнулось (нет класса with-sidebar)"""
         return self.page.locator(loc.SIDEBAR_COLLAPSED).is_visible()
 
+    def expand_sidebar(self, loc):
+        """Раскрывает боковое меню, если оно узкое (.sidebar-wrapper.small)"""
+        if self.is_sidebar_collapsed(loc):
+            self.click_on_elem(loc.SIDEBAR_BURGER)
+
     def click_menu_item_products(self, loc):
         """Кликает на пункт меню 'Товары'"""
         self.click_on_elem(loc.MENU_ITEM_PRODUCTS)

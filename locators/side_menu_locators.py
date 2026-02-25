@@ -26,6 +26,9 @@ class SideMenuLocators:
     # Критерий 2: боковое меню схлопнулось
     SIDEBAR_COLLAPSED = ".sidebar-wrapper.small"
 
+    # Кнопка раскрытия/сворачивания бокового меню (burger)
+    SIDEBAR_BURGER = ".burger.light"
+
     # Пункт меню Товары
     MENU_ITEM_PRODUCTS = ".item__link-text:has-text('Товары')"
 
