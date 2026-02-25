@@ -61,7 +61,7 @@ class TestUserAuthorization:
             auth_page.open()
         with allure.step("Enter valid phone and wrong password, click submit"):
             auth_page.authorization_with_wrong_password(
-                self.locator, self.data.SUBADMIN_PASSWORD, self.data.WRONG_PASSWORD
+                self.locator, self.data.SUBADMIN_PHONE_NUMBER, self.data.WRONG_PASSWORD
             )
         with allure.step("Verify error toast message is displayed"):
             error_text = auth_page.get_error_toast_text(self.locator)
