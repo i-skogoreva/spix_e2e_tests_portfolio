@@ -128,3 +128,129 @@ class TestUserAuthorization:
         with allure.step("Verify flag changed to Kazakhstan"):
             flag_class = auth_page.get_country_flag_class(self.locator)
             self.assertions.assert_text(flag_class, self.data.KAZAKHSTAN_FLAG_CLASS)
+
+    @allure.title("TC-0008: Language switch changes page texts [{language}]")
+    @allure.description("Verify that switching language updates all page texts to the selected language")
+    @allure.severity(allure.severity_level.NORMAL)
+    @pytest.mark.parametrize("language", ["English", "Indonesia", "Русский"],
+                             ids=["english", "indonesia", "russian"])
+    def test_tc_0008_language_switch(self, page, language):
+        with allure.step("Open authorization page"):
+            full_url = self.data.BASE_URL + self.endpoint.AUTHORIZATION_USER_ENDPOINT
+            auth_page = UserAuthorizationPage(page, full_url)
+            auth_page.open()
+        with allure.step(f"Switch language to {language}"):
+            auth_page.select_language(self.locator, language)
+        with allure.step(f"Verify page texts match {language} translation"):
+            expected = self.data.LANG_TRANSLATIONS[language]
+            actual_texts = {
+                "title": auth_page.get_signin_title(self.locator),
+                "description": auth_page.get_signin_description(self.locator),
+                "phone_label": auth_page.get_phone_label(self.locator),
+                "password_label": auth_page.get_password_label(self.locator),
+                "recover_pass": auth_page.get_recover_pass_text(self.locator),
+            }
+            self.assertions.assert_page_texts(actual_texts, expected)
+
+    @allure.title("TC-0009: Return to authorization page from SMS code page")
+    @allure.description("Verify that clicking return button on SMS page navigates back to authorization form")
+    @allure.severity(allure.severity_level.NORMAL)
+    def test_tc_0009_return_from_sms_page(self, page):
+        with allure.step("Open authorization page"):
+            full_url = self.data.BASE_URL + self.endpoint.AUTHORIZATION_USER_ENDPOINT
+            auth_page = UserAuthorizationPage(page, full_url)
+            auth_page.open()
+        with allure.step("Submit valid credentials to reach SMS code page"):
+            auth_page.submit_credentials(
+                self.locator, self.data.SUBADMIN_PHONE_NUMBER, self.data.SUBADMIN_PASSWORD
+            )
+        with allure.step("Click return to authorization button"):
+            auth_page.click_return_to_signin(self.locator)
+        with allure.step("Verify authorization form is displayed"):
+            phone_label = auth_page.get_phone_label(self.locator)
+            self.assertions.assert_text(phone_label, "Телефон")
+
+    @allure.title("TC-0010: Resend SMS code after timer expires")
+    @allure.description("Verify that resending SMS code shows confirmation text and restarts the timer")
+    @allure.severity(allure.severity_level.NORMAL)
+    def test_tc_0010_resend_sms_code(self, page):
+        with allure.step("Open authorization page"):
+            full_url = self.data.BASE_URL + self.endpoint.AUTHORIZATION_USER_ENDPOINT
+            auth_page = UserAuthorizationPage(page, full_url)
+            auth_page.open()
+        with allure.step("Submit valid credentials to reach SMS code page"):
+            auth_page.submit_credentials(
+                self.locator, self.data.SUBADMIN_PHONE_NUMBER, self.data.SUBADMIN_PASSWORD
+            )
+        with allure.step("Wait for resend timer to expire"):
+            auth_page.wait_resend_code_available(self.locator)
+        with allure.step("Click resend code button"):
+            auth_page.click_resend_code(self.locator)
+        with allure.step("Verify code sent confirmation and timer are displayed"):
+            code_sent_text = auth_page.get_code_sent_text(self.locator)
+            self.assertions.assert_text(code_sent_text, self.data.CODE_SENT_TEXT)
+
+    @allure.title("TC-0011: Support button opens support page")
+    @allure.description("Verify that clicking 'Нужна помощь?' button redirects to the support page")
+    @allure.severity(allure.severity_level.NORMAL)
+    def test_tc_0011_support_button_opens_support_page(self, page):
+        with allure.step("Open authorization page"):
+            full_url = self.data.BASE_URL + self.endpoint.AUTHORIZATION_USER_ENDPOINT
+            auth_page = UserAuthorizationPage(page, full_url)
+            auth_page.open()
+        with allure.step("Click 'Нужна помощь?' button"):
+            auth_page.click_support_btn(self.locator)
+        with allure.step("Verify redirect to support page"):
+            expected_url = self.data.BASE_URL + self.endpoint.SUPPORT_SIGNIN_ENDPOINT
+            self.assertions.assert_url(page.url, expected_url)
+
+    @allure.title("TC-0012: Recover password link opens password recovery page")
+    @allure.description("Verify that clicking 'Восстановить пароль' link redirects to the password recovery page")
+    @allure.severity(allure.severity_level.NORMAL)
+    def test_tc_0012_recover_password_link(self, page):
+        with allure.step("Open authorization page"):
+            full_url = self.data.BASE_URL + self.endpoint.AUTHORIZATION_USER_ENDPOINT
+            auth_page = UserAuthorizationPage(page, full_url)
+            auth_page.open()
+        with allure.step("Click 'Восстановить пароль' link"):
+            auth_page.click_recover_pass(self.locator)
+        with allure.step("Verify redirect to password recovery page"):
+            expected_url = self.data.BASE_URL + self.endpoint.PASS_RECOVERY_ENDPOINT
+            self.assertions.assert_url(page.url, expected_url)
+
+    @allure.title("TC-0013: Password recovery sends confirmation email")
+    @allure.description("Verify that submitting email on password recovery page shows confirmation text and displays the email")
+    @allure.severity(allure.severity_level.NORMAL)
+    def test_tc_0013_password_recovery_confirmation(self, page):
+        with allure.step("Open password recovery page"):
+            full_url = self.data.BASE_URL + self.endpoint.PASS_RECOVERY_ENDPOINT
+            auth_page = UserAuthorizationPage(page, full_url)
+            auth_page.open()
+        with allure.step("Enter email and submit recovery form"):
+            auth_page.submit_recovery_email(self.locator, self.data.RECOVERY_EMAIL)
+        with allure.step("Verify confirmation text and email are displayed"):
+            actual_texts = {
+                "description": auth_page.get_recovery_description(self.locator),
+                "email": auth_page.get_recovery_email(self.locator),
+            }
+            expected_texts = {
+                "description": self.data.RECOVERY_CONFIRMATION_TEXT,
+                "email": self.data.RECOVERY_EMAIL,
+            }
+            self.assertions.assert_page_texts(actual_texts, expected_texts)
+
+    @allure.title("TC-0014: Return to authorization page from password recovery page")
+    @allure.description("Verify that clicking 'Авторизация' link on password recovery page navigates back to signin")
+    @allure.severity(allure.severity_level.NORMAL)
+    def test_tc_0014_return_from_recovery_page(self, page):
+        with allure.step("Open password recovery page"):
+            full_url = self.data.BASE_URL + self.endpoint.PASS_RECOVERY_ENDPOINT
+            auth_page = UserAuthorizationPage(page, full_url)
+            auth_page.open()
+        with allure.step("Click 'Авторизация' link to return"):
+            auth_page.click_recovery_return_to_signin(self.locator)
+        with allure.step("Verify redirect to authorization page"):
+            expected_url = self.data.BASE_URL + self.endpoint.AUTHORIZATION_USER_ENDPOINT
+            self.assertions.assert_url(
+                page.url.rstrip('/'), expected_url.rstrip('/')
+            )

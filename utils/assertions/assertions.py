@@ -11,3 +11,13 @@ class Assertions:
 
     def assert_true(self, condition: bool, message: str):
         assert condition, message
+
+    def assert_page_texts(self, actual_texts, expected_texts):
+        mismatches = []
+        for key, expected in expected_texts.items():
+            actual = actual_texts.get(key)
+            if actual != expected:
+                mismatches.append(f"  {key}: ожидали '{expected}', получили '{actual}'")
+        assert not mismatches, (
+            f"Тексты страницы не соответствуют ожидаемым:\n" + "\n".join(mismatches)
+        )
