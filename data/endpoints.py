@@ -4,3 +4,4 @@ class Endpoints:
     SUPPORT_SIGNIN_ENDPOINT = "/support-signin"
     PASS_RECOVERY_ENDPOINT = "/pass-recovery"
     PASS_RECOVERY_SEND_ENDPOINT = "/pass-recovery-send"
+    CLIENTS_ENDPOINT = "/clients"

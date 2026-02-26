@@ -1,42 +1,45 @@
 import allure
 import pytest
 from locators.authorization_locators import UserAuthorization
+from locators.clients_page_locators import ClientsPageLocators
+from locators.user_management_locators import UserManagementLocators
 from pages.authorization_page import UserAuthorizationPage
+from pages.clients_page import ClientsPage
+from pages.user_management_page import UserManagementPage
 from data.endpoints import Endpoints
 from data.dataclasses.user_dataclass import UserData
+from data.dataclasses.manager_auth_dataclass import ManagerAuthData
 from utils.assertions.assertions import Assertions
 
 @allure.feature('User Authorization')
 @allure.story('Login')
 class TestUserAuthorization:
     locator = UserAuthorization()
+    clients_locator = ClientsPageLocators()
+    user_mgmt_locator = UserManagementLocators()
     endpoint = Endpoints()
     assertions = Assertions()
     data = UserData()
+    manager_data = ManagerAuthData()
 
-    @allure.title("TC-0001: Successful user authorization [{role}]")
-    @allure.description("Verify that user can successfully log in with valid credentials and redirect to feedback page")
+    @allure.title("TC-0101s: Successful subadmin authorization")
+    @allure.description("Verify that subadmin can successfully log in with valid credentials and redirect to feedback page")
     @allure.severity(allure.severity_level.CRITICAL)
-    @pytest.mark.parametrize("role, phone, password", [
-        ("subadmin", UserData.SUBADMIN_PHONE_NUMBER, UserData.SUBADMIN_PASSWORD),
-        ("manager", UserData.MANAGER_PHONE_NUMBER, UserData.MANAGER_PASSWORD),
-        ("operator", UserData.OPERATOR_PHONE_NUMBER, UserData.OPERATOR_PASSWORD),
-    ], ids=["subadmin", "manager", "operator"])
-    def test_tc_0001_successful_authorization(self, page, role, phone, password):
-        with allure.step(f"Open authorization page"):
+    def test_tc_0101s_successful_authorization(self, page):
+        with allure.step("Open authorization page"):
             full_url = self.data.BASE_URL + self.endpoint.AUTHORIZATION_USER_ENDPOINT
             auth_page = UserAuthorizationPage(page, full_url)
             auth_page.open()
-        with allure.step(f"Perform {role} authorization"):
-            auth_page.authorization_user(self.locator, phone, password)
+        with allure.step("Perform subadmin authorization"):
+            auth_page.authorization_user(self.locator, self.data.SUBADMIN_PHONE_NUMBER, self.data.SUBADMIN_PASSWORD)
         with allure.step("Verify redirect to feedback page"):
             expected_url = self.data.BASE_URL + self.endpoint.FEEDBACK_PAGE_ENDPOINT
             self.assertions.assert_url(page.url, expected_url)
 
-    @allure.title("TC-0002: No redirect after authorization with wrong password")
+    @allure.title("TC-0102: No redirect after authorization with wrong password")
     @allure.description("Verify that user stays on signin page after entering wrong password")
     @allure.severity(allure.severity_level.CRITICAL)
-    def test_tc_0002_no_redirect_with_wrong_password(self, page):
+    def test_tc_0102_no_redirect_with_wrong_password(self, page):
         with allure.step("Open authorization page"):
             full_url = self.data.BASE_URL + self.endpoint.AUTHORIZATION_USER_ENDPOINT
             auth_page = UserAuthorizationPage(page, full_url)
@@ -51,10 +54,10 @@ class TestUserAuthorization:
                 page.url.rstrip('/'), expected_url.rstrip('/')
             )
 
-    @allure.title("TC-0003: Error toast on authorization with wrong password")
+    @allure.title("TC-0103: Error toast on authorization with wrong password")
     @allure.description("Verify that error toast is displayed after entering wrong password")
     @allure.severity(allure.severity_level.CRITICAL)
-    def test_tc_0003_error_toast_with_wrong_password(self, page):
+    def test_tc_0103_error_toast_with_wrong_password(self, page):
         with allure.step("Open authorization page"):
             full_url = self.data.BASE_URL + self.endpoint.AUTHORIZATION_USER_ENDPOINT
             auth_page = UserAuthorizationPage(page, full_url)
@@ -67,10 +70,10 @@ class TestUserAuthorization:
             error_text = auth_page.get_error_toast_text(self.locator)
             self.assertions.assert_text(error_text, self.data.ERROR_MESSAGE_PASSWORD)
 
-    @allure.title("TC-0004: No redirect after authorization with wrong phone number")
+    @allure.title("TC-0104: No redirect after authorization with wrong phone number")
     @allure.description("Verify that user stays on signin page after entering wrong phone number")
     @allure.severity(allure.severity_level.CRITICAL)
-    def test_tc_0004_no_redirect_with_wrong_phone(self, page):
+    def test_tc_0104_no_redirect_with_wrong_phone(self, page):
         with allure.step("Open authorization page"):
             full_url = self.data.BASE_URL + self.endpoint.AUTHORIZATION_USER_ENDPOINT
             auth_page = UserAuthorizationPage(page, full_url)
@@ -85,10 +88,10 @@ class TestUserAuthorization:
                 page.url.rstrip('/'), expected_url.rstrip('/')
             )
 
-    @allure.title("TC-0005: Error toast on authorization with wrong phone number")
+    @allure.title("TC-0105: Error toast on authorization with wrong phone number")
     @allure.description("Verify that error toast is displayed after entering wrong phone number")
     @allure.severity(allure.severity_level.CRITICAL)
-    def test_tc_0005_error_toast_with_wrong_phone(self, page):
+    def test_tc_0105_error_toast_with_wrong_phone(self, page):
         with allure.step("Open authorization page"):
             full_url = self.data.BASE_URL + self.endpoint.AUTHORIZATION_USER_ENDPOINT
             auth_page = UserAuthorizationPage(page, full_url)
@@ -101,10 +104,10 @@ class TestUserAuthorization:
             error_text = auth_page.get_error_toast_text(self.locator)
             self.assertions.assert_text(error_text, self.data.ERROR_MESSAGE_PASSWORD)
 
-    @allure.title("TC-0006: Phone placeholder changes after selecting Kazakhstan")
+    @allure.title("TC-0106: Phone placeholder changes after selecting Kazakhstan")
     @allure.description("Verify that phone placeholder updates to Kazakhstan format after country switch")
     @allure.severity(allure.severity_level.NORMAL)
-    def test_tc_0006_phone_placeholder_changes_to_kazakhstan(self, page):
+    def test_tc_0106_phone_placeholder_changes_to_kazakhstan(self, page):
         with allure.step("Open authorization page"):
             full_url = self.data.BASE_URL + self.endpoint.AUTHORIZATION_USER_ENDPOINT
             auth_page = UserAuthorizationPage(page, full_url)
@@ -115,10 +118,10 @@ class TestUserAuthorization:
             placeholder = auth_page.get_phone_placeholder(self.locator)
             self.assertions.assert_text(placeholder, self.data.KAZAKHSTAN_PHONE_PLACEHOLDER)
 
-    @allure.title("TC-0007: Country flag changes after selecting Kazakhstan")
+    @allure.title("TC-0107: Country flag changes after selecting Kazakhstan")
     @allure.description("Verify that country flag updates to Kazakhstan after country switch")
     @allure.severity(allure.severity_level.NORMAL)
-    def test_tc_0007_country_flag_changes_to_kazakhstan(self, page):
+    def test_tc_0107_country_flag_changes_to_kazakhstan(self, page):
         with allure.step("Open authorization page"):
             full_url = self.data.BASE_URL + self.endpoint.AUTHORIZATION_USER_ENDPOINT
             auth_page = UserAuthorizationPage(page, full_url)
@@ -129,12 +132,12 @@ class TestUserAuthorization:
             flag_class = auth_page.get_country_flag_class(self.locator)
             self.assertions.assert_text(flag_class, self.data.KAZAKHSTAN_FLAG_CLASS)
 
-    @allure.title("TC-0008: Language switch changes page texts [{language}]")
+    @allure.title("TC-0108: Language switch changes page texts [{language}]")
     @allure.description("Verify that switching language updates all page texts to the selected language")
     @allure.severity(allure.severity_level.NORMAL)
     @pytest.mark.parametrize("language", ["English", "Indonesia", "Русский"],
                              ids=["english", "indonesia", "russian"])
-    def test_tc_0008_language_switch(self, page, language):
+    def test_tc_0108_language_switch(self, page, language):
         with allure.step("Open authorization page"):
             full_url = self.data.BASE_URL + self.endpoint.AUTHORIZATION_USER_ENDPOINT
             auth_page = UserAuthorizationPage(page, full_url)
@@ -152,10 +155,10 @@ class TestUserAuthorization:
             }
             self.assertions.assert_page_texts(actual_texts, expected)
 
-    @allure.title("TC-0009: Return to authorization page from SMS code page")
+    @allure.title("TC-0109: Return to authorization page from SMS code page")
     @allure.description("Verify that clicking return button on SMS page navigates back to authorization form")
     @allure.severity(allure.severity_level.NORMAL)
-    def test_tc_0009_return_from_sms_page(self, page):
+    def test_tc_0109_return_from_sms_page(self, page):
         with allure.step("Open authorization page"):
             full_url = self.data.BASE_URL + self.endpoint.AUTHORIZATION_USER_ENDPOINT
             auth_page = UserAuthorizationPage(page, full_url)
@@ -170,10 +173,10 @@ class TestUserAuthorization:
             phone_label = auth_page.get_phone_label(self.locator)
             self.assertions.assert_text(phone_label, "Телефон")
 
-    @allure.title("TC-0010: Resend SMS code after timer expires")
+    @allure.title("TC-0110: Resend SMS code after timer expires")
     @allure.description("Verify that resending SMS code shows confirmation text and restarts the timer")
     @allure.severity(allure.severity_level.NORMAL)
-    def test_tc_0010_resend_sms_code(self, page):
+    def test_tc_0110_resend_sms_code(self, page):
         with allure.step("Open authorization page"):
             full_url = self.data.BASE_URL + self.endpoint.AUTHORIZATION_USER_ENDPOINT
             auth_page = UserAuthorizationPage(page, full_url)
@@ -190,10 +193,10 @@ class TestUserAuthorization:
             code_sent_text = auth_page.get_code_sent_text(self.locator)
             self.assertions.assert_text(code_sent_text, self.data.CODE_SENT_TEXT)
 
-    @allure.title("TC-0011: Support button opens support page")
+    @allure.title("TC-0111: Support button opens support page")
     @allure.description("Verify that clicking 'Нужна помощь?' button redirects to the support page")
     @allure.severity(allure.severity_level.NORMAL)
-    def test_tc_0011_support_button_opens_support_page(self, page):
+    def test_tc_0111_support_button_opens_support_page(self, page):
         with allure.step("Open authorization page"):
             full_url = self.data.BASE_URL + self.endpoint.AUTHORIZATION_USER_ENDPOINT
             auth_page = UserAuthorizationPage(page, full_url)
@@ -204,10 +207,10 @@ class TestUserAuthorization:
             expected_url = self.data.BASE_URL + self.endpoint.SUPPORT_SIGNIN_ENDPOINT
             self.assertions.assert_url(page.url, expected_url)
 
-    @allure.title("TC-0012: Recover password link opens password recovery page")
+    @allure.title("TC-0112: Recover password link opens password recovery page")
     @allure.description("Verify that clicking 'Восстановить пароль' link redirects to the password recovery page")
     @allure.severity(allure.severity_level.NORMAL)
-    def test_tc_0012_recover_password_link(self, page):
+    def test_tc_0112_recover_password_link(self, page):
         with allure.step("Open authorization page"):
             full_url = self.data.BASE_URL + self.endpoint.AUTHORIZATION_USER_ENDPOINT
             auth_page = UserAuthorizationPage(page, full_url)
@@ -218,10 +221,10 @@ class TestUserAuthorization:
             expected_url = self.data.BASE_URL + self.endpoint.PASS_RECOVERY_ENDPOINT
             self.assertions.assert_url(page.url, expected_url)
 
-    @allure.title("TC-0013: Password recovery sends confirmation email")
+    @allure.title("TC-0113: Password recovery sends confirmation email")
     @allure.description("Verify that submitting email on password recovery page shows confirmation text and displays the email")
     @allure.severity(allure.severity_level.NORMAL)
-    def test_tc_0013_password_recovery_confirmation(self, page):
+    def test_tc_0113_password_recovery_confirmation(self, page):
         with allure.step("Open password recovery page"):
             full_url = self.data.BASE_URL + self.endpoint.PASS_RECOVERY_ENDPOINT
             auth_page = UserAuthorizationPage(page, full_url)
@@ -239,10 +242,10 @@ class TestUserAuthorization:
             }
             self.assertions.assert_page_texts(actual_texts, expected_texts)
 
-    @allure.title("TC-0014: Return to authorization page from password recovery page")
+    @allure.title("TC-0114: Return to authorization page from password recovery page")
     @allure.description("Verify that clicking 'Авторизация' link on password recovery page navigates back to signin")
     @allure.severity(allure.severity_level.NORMAL)
-    def test_tc_0014_return_from_recovery_page(self, page):
+    def test_tc_0114_return_from_recovery_page(self, page):
         with allure.step("Open password recovery page"):
             full_url = self.data.BASE_URL + self.endpoint.PASS_RECOVERY_ENDPOINT
             auth_page = UserAuthorizationPage(page, full_url)
@@ -253,4 +256,69 @@ class TestUserAuthorization:
             expected_url = self.data.BASE_URL + self.endpoint.AUTHORIZATION_USER_ENDPOINT
             self.assertions.assert_url(
                 page.url.rstrip('/'), expected_url.rstrip('/')
+            )
+
+    @allure.title("TC-0115m: Успешная авторизация менеджера")
+    @allure.description(
+        "Авторизация под субадмином, создание клиента, "
+        "создание менеджера для клиента, "
+        "авторизация под созданным менеджером."
+    )
+    @allure.severity(allure.severity_level.CRITICAL)
+    def test_tc_0115m_successful_manager_authorization(self, page):
+        with allure.step("Открыть страницу авторизации и войти под субадмином"):
+            full_url = self.data.BASE_URL + self.endpoint.AUTHORIZATION_USER_ENDPOINT
+            auth_page = UserAuthorizationPage(page, full_url)
+            auth_page.open()
+            auth_page.authorization_user_wildcard(
+                self.locator,
+                self.data.SUBADMIN_PHONE_NUMBER,
+                self.data.SUBADMIN_PASSWORD
+            )
+
+        with allure.step("Перейти на страницу Клиенты"):
+            clients_url = self.data.BASE_URL + self.endpoint.CLIENTS_ENDPOINT
+            clients_page = ClientsPage(page, clients_url)
+            clients_page.open()
+            clients_page.wait_locator(self.clients_locator.ADD_CLIENT_BTN)
+
+        with allure.step(f"Создать клиента '{self.manager_data.CLIENT_NAME}'"):
+            clients_page.create_client(
+                self.clients_locator,
+                self.manager_data.CLIENT_NAME,
+                self.manager_data.CLIENT_EMAIL
+            )
+
+        with allure.step("Открыть созданного клиента"):
+            clients_page.click_first_client(self.manager_data.CLIENT_NAME)
+
+        with allure.step("Перейти к форме добавления пользователя"):
+            clients_page.navigate_to_add_user(self.clients_locator)
+
+        with allure.step(f"Создать менеджера '{self.manager_data.MANAGER_NAME}'"):
+            user_mgmt_page = UserManagementPage(page)
+            user_mgmt_page.create_manager(
+                self.user_mgmt_locator,
+                self.manager_data.MANAGER_NAME,
+                self.manager_data.MANAGER_EMAIL,
+                self.manager_data.MANAGER_PHONE,
+                self.manager_data.MANAGER_PASSWORD
+            )
+
+        with allure.step("Перейти на страницу авторизации"):
+            page.context.clear_cookies()
+            auth_page = UserAuthorizationPage(page, full_url)
+            auth_page.open()
+
+        with allure.step("Авторизоваться под созданным менеджером"):
+            auth_page.authorization_user_wildcard(
+                self.locator,
+                self.manager_data.MANAGER_PHONE,
+                self.manager_data.MANAGER_PASSWORD
+            )
+
+        with allure.step("Проверить успешную авторизацию менеджера"):
+            self.assertions.assert_true(
+                "feedbacks_tab=pending" in page.url,
+                f"Менеджер не перенаправлен на страницу отзывов. Текущий URL: {page.url}"
             )
