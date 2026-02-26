@@ -75,7 +75,7 @@ class UserAuthorizationPage(BasePage):
 
     def click_resend_code(self, locator):
          self.click_on_elem(locator.RESEND_CODE_BTN_LOC)
-         self.wait_locator(locator.CODE_SENT_LOC)
+         self.wait_locator(locator.CODE_SENT_LOC, timeout=30000)
 
     def get_code_sent_text(self, locator):
          return self.get_text(locator.CODE_SENT_LOC).strip()
@@ -85,12 +85,14 @@ class UserAuthorizationPage(BasePage):
 
     def click_support_btn(self, locator):
          self.click_on_elem(locator.SUPPORT_BTN_LOC)
+         self.wait_url("**/support-signin")
 
     def click_recover_pass(self, locator):
          self.click_on_elem(locator.RECOVER_PASS_LOC)
 
     def click_recovery_return_to_signin(self, locator):
          self.click_on_elem(locator.RETURN_TO_SIGNIN_LOC)
+         self.wait_locator(locator.PHONE_LABEL_LOC)
 
     def submit_recovery_email(self, locator, email):
          self.fill_text(locator.EMAIL_INPUT_LOC, email)
