@@ -27,3 +27,4 @@ class UserAuthorization:
     PASS_RECOVERY_SUBMIT_LOC = "button.button-main.signin__pass-recovery"
     RECOVERY_DESCRIPTION_LOC = ".signin__description"
     RECOVERY_EMAIL_LOC = ".signin__form-email"
+    SMS_CODE_LABEL_LOC = ".verification-code__title"

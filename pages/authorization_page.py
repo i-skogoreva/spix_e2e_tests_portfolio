@@ -117,3 +117,12 @@ class UserAuthorizationPage(BasePage):
 
     def get_recovery_email(self, locator):
          return self.get_text(locator.RECOVERY_EMAIL_LOC)
+
+    def get_sms_page_title(self, locator):
+         return self.page.locator(locator.SIGNIN_TITLE_LOC).last.text_content()
+
+    def get_sms_page_description(self, locator):
+         return self.page.locator(locator.SIGNIN_DESCRIPTION_LOC).last.text_content()
+
+    def get_sms_code_label(self, locator):
+         return self.get_text(locator.SMS_CODE_LABEL_LOC)
