@@ -161,3 +161,122 @@ class SideMenuPage(BasePage):
     def is_settings_page_open(self, loc) -> bool:
         """Проверяет открытие страницы Настройки по наличию заголовка"""
         return self.page.locator(loc.SETTINGS_PAGE_TITLE).is_visible()
+
+    def hover_help_menu(self, loc):
+        """Ховер на элемент 'Нужна помощь?' для вызова ховер-меню"""
+        self.hover_on_elem(loc.HELP_MENU_TRIGGER)
+
+    def click_instructions(self, loc):
+        """Кликает на кнопку 'Смотреть инструкции' в ховер-меню"""
+        self.click_on_elem(loc.HELP_INSTRUCTIONS_BTN)
+
+    def click_support(self, loc):
+        """Кликает на кнопку 'Написать в поддержку' в ховер-меню"""
+        self.click_on_elem(loc.HELP_SUPPORT_BTN)
+
+    def hover_profile_menu(self, loc):
+        """Ховер на блок профиля в футере сайдбара"""
+        self.hover_on_elem(loc.PROFILE_MENU_TRIGGER)
+
+    def click_my_profile(self, loc):
+        """Кликает на кнопку 'Мой профиль' в ховер-меню профиля"""
+        self.click_on_elem(loc.PROFILE_MY_PROFILE_BTN)
+
+    def click_company(self, loc):
+        """Кликает на кнопку 'Компания' в ховер-меню профиля"""
+        self.click_on_elem(loc.PROFILE_COMPANY_BTN)
+
+    def click_history(self, loc):
+        """Кликает на кнопку 'История обработки' в ховер-меню профиля"""
+        self.click_on_elem(loc.PROFILE_HISTORY_BTN)
+
+    def click_logout(self, loc):
+        """Кликает на кнопку 'Выход' в ховер-меню профиля"""
+        self.click_on_elem(loc.PROFILE_LOGOUT_BTN)
+
+    def click_confirm_logout(self, loc):
+        """Кликает 'Да' в модальном окне подтверждения выхода"""
+        self.click_on_elem(loc.LOGOUT_CONFIRM_YES_BTN)
+
+    def get_current_url(self):
+        """Возвращает текущий URL страницы"""
+        return self.page.url
+
+    def wait_for_new_tab_and_get_url(self, loc):
+        """Ховер + клик с перехватом новой вкладки, возвращает URL новой вкладки.
+
+        Если ссылка открывается в той же вкладке (нет target="_blank"),
+        возвращает URL текущей страницы после навигации.
+        """
+        try:
+            with self.page.context.expect_page(timeout=8000) as new_page_info:
+                self.click_on_elem(loc.HELP_INSTRUCTIONS_BTN)
+            new_page = new_page_info.value
+            new_page.wait_for_load_state("domcontentloaded", timeout=30000)
+            return new_page.url
+        except Exception:
+            # Фолбэк: инструкции открылись в текущей вкладке
+            try:
+                self.page.wait_for_load_state("domcontentloaded", timeout=5000)
+            except Exception:
+                pass
+            return self.page.url
+
+    # ── Узкое меню (narrow) ───────────────────────────────────────────────
+
+    def collapse_sidebar(self, loc):
+        """Сворачивает боковое меню до узкого, если оно широкое"""
+        if not self.is_sidebar_collapsed(loc):
+            self.click_on_elem(loc.SIDEBAR_BURGER)
+
+    # Триггеры попапов — клик
+    def click_menu_item_reviews_narrow(self, loc):
+        """Кликает на иконку 'Отзывы' в узком меню для открытия попапа"""
+        self.click_on_elem(loc.MENU_ITEM_REVIEWS_NARROW)
+
+    def click_menu_item_analytics_narrow(self, loc):
+        """Кликает на иконку 'Аналитика' в узком меню для открытия попапа"""
+        self.click_on_elem(loc.MENU_ITEM_ANALYTICS_NARROW)
+
+    # Триггеры попапов — ховер
+    def hover_menu_item_reviews_narrow(self, loc):
+        """Ховер на иконку 'Отзывы' в узком меню для открытия попапа"""
+        self.hover_on_elem(loc.MENU_ITEM_REVIEWS_NARROW)
+
+    def hover_menu_item_analytics_narrow(self, loc):
+        """Ховер на иконку 'Аналитика' в узком меню для открытия попапа"""
+        self.hover_on_elem(loc.MENU_ITEM_ANALYTICS_NARROW)
+
+    # Прямые переходы — иконки без попапа
+    def click_menu_item_chats_narrow(self, loc):
+        """Кликает на иконку 'Чаты' в узком меню"""
+        self.click_on_elem(loc.MENU_ITEM_CHATS_NARROW)
+
+    def click_menu_item_products_narrow(self, loc):
+        """Кликает на иконку 'Товары' в узком меню"""
+        self.click_on_elem(loc.MENU_ITEM_PRODUCTS_NARROW)
+
+    def click_menu_item_places_narrow(self, loc):
+        """Кликает на иконку 'Места' в узком меню"""
+        self.click_on_elem(loc.MENU_ITEM_PLACES_NARROW)
+
+    def click_menu_item_clients_narrow(self, loc):
+        """Кликает на иконку 'Клиенты' в узком меню"""
+        self.click_on_elem(loc.MENU_ITEM_CLIENTS_NARROW)
+
+    def click_menu_item_settings_narrow(self, loc):
+        """Кликает на иконку 'Настройки' в узком меню"""
+        self.click_on_elem(loc.MENU_ITEM_SETTINGS_NARROW)
+
+    def is_narrow_popup_open(self, loc) -> bool:
+        """Проверяет, что попап узкого меню открыт (.tooltip-menu)"""
+        return self.page.locator(loc.NARROW_POPUP).is_visible()
+
+    # Клик для открытия попапов «Помощь» и «Профиль» (узкое меню)
+    def click_help_menu(self, loc):
+        """Кликает на 'Нужна помощь?' для открытия попапа"""
+        self.click_on_elem(loc.HELP_MENU_TRIGGER)
+
+    def click_profile_menu(self, loc):
+        """Кликает на блок профиля для открытия попапа"""
+        self.click_on_elem(loc.PROFILE_MENU_TRIGGER)
