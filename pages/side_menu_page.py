@@ -217,7 +217,7 @@ class SideMenuPage(BasePage):
         except Exception:
             # Фолбэк: инструкции открылись в текущей вкладке
             try:
-                self.page.wait_for_load_state("domcontentloaded", timeout=5000)
+                self.page.wait_for_url(lambda url: "instructions" in url, timeout=2000)
             except Exception:
                 pass
             return self.page.url

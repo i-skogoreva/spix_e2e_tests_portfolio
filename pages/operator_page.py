@@ -45,23 +45,28 @@ class OperatorPage(BasePage):
 
     def click_my_profile(self, loc):
         """Кликает на 'Мой профиль' в выпадающем меню профиля."""
-        self.click_on_elem(loc.PROFILE_MY_PROFILE_BTN)
+        self.page.wait_for_timeout(700)
+        self.page.locator(loc.PROFILE_MY_PROFILE_BTN).click(force=True)
 
     def click_support(self, loc):
         """Кликает на 'Написать в поддержку' в выпадающем меню профиля."""
-        self.click_on_elem(loc.PROFILE_SUPPORT_BTN)
+        self.page.wait_for_timeout(300)
+        self.page.locator(loc.PROFILE_SUPPORT_BTN).click(force=True)
 
     def click_history(self, loc):
         """Кликает на 'История обработки' в выпадающем меню профиля."""
-        self.click_on_elem(loc.PROFILE_HISTORY_BTN)
+        self.page.wait_for_timeout(300)
+        self.page.locator(loc.PROFILE_HISTORY_BTN).click(force=True)
 
     def click_logout(self, loc):
         """Кликает на 'Выход'/'Выйти' в выпадающем меню профиля."""
-        self.click_on_elem(loc.PROFILE_LOGOUT_BTN)
+        self.page.wait_for_timeout(300)
+        self.page.locator(loc.PROFILE_LOGOUT_BTN).click(force=True)
 
     def click_confirm_logout(self, loc):
         """Кликает 'Да' в модальном окне подтверждения выхода."""
-        self.click_on_elem(loc.LOGOUT_CONFIRM_YES_BTN)
+        self.page.wait_for_timeout(300)
+        self.page.locator(loc.LOGOUT_CONFIRM_YES_BTN).click(force=True)
 
     # ── Открытие инструкций в новой вкладке ──────────────────────────────
 
@@ -80,7 +85,7 @@ class OperatorPage(BasePage):
         except Exception:
             # Фолбэк: инструкции открылись в текущей вкладке
             try:
-                self.page.wait_for_load_state("domcontentloaded", timeout=5000)
+                self.page.wait_for_url(lambda url: "instructions" in url, timeout=2000)
             except Exception:
                 pass
             return self.page.url

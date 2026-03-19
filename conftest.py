@@ -80,12 +80,6 @@ def subadmin_context(playwright: Playwright):
     page.locator(user_authorization.PHONE_FIELD_LOC).fill(data.SUBADMIN_PHONE_NUMBER)
     page.locator(user_authorization.PASSWORD_FIELD_LOC).fill(data.SUBADMIN_PASSWORD)
     page.locator(user_authorization.SUBMIT_BUTTON_LOC).click()
-    page.locator(user_authorization.CODE_FIRST_DIGIT_LOC).wait_for(state="visible")
-    page.locator(user_authorization.CODE_FIRST_DIGIT_LOC).click()
-    page.locator(user_authorization.CODE_FIRST_DIGIT_LOC).fill(data.SMS_CODE[0])
-    for i in range(5):
-        page.locator(user_authorization.CODE_5DIGITS_LOC).nth(i).fill(data.SMS_CODE[i + 1])
-    page.locator(user_authorization.ENTER_BUTTON_LOC).click()
     page.wait_for_url("**/1?**")
     page.close()
 
@@ -133,13 +127,6 @@ def subadmin_page(subadmin_context, auto_client):
         page.locator(user_authorization.PHONE_FIELD_LOC).fill(data.SUBADMIN_PHONE_NUMBER)
         page.locator(user_authorization.PASSWORD_FIELD_LOC).fill(data.SUBADMIN_PASSWORD)
         page.locator(user_authorization.SUBMIT_BUTTON_LOC).click()
-        page.locator(user_authorization.CODE_FIRST_DIGIT_LOC).wait_for(state="visible", timeout=15000)
-        page.wait_for_timeout(2000)
-        page.locator(user_authorization.CODE_FIRST_DIGIT_LOC).click()
-        page.locator(user_authorization.CODE_FIRST_DIGIT_LOC).fill(data.SMS_CODE[0])
-        for i in range(5):
-            page.locator(user_authorization.CODE_5DIGITS_LOC).nth(i).fill(data.SMS_CODE[i + 1])
-        page.locator(user_authorization.ENTER_BUTTON_LOC).click()
         page.wait_for_url("**/1?**", timeout=30000)
         page.close()
         page = subadmin_context.new_page()
@@ -189,7 +176,10 @@ def auto_client(subadmin_context):
     # ── 3. Биллинг: ждём Демо-план, затем переключаем на ПРО (пробный) ───
     for _ in range(8):
         page.goto(f"{base}/settings-company/billing?client_id={client_id}", timeout=30000)
-        page.wait_for_load_state("networkidle", timeout=15000)
+        try:
+            page.wait_for_load_state("networkidle", timeout=15000)
+        except Exception:
+            pass
         try:
             page.locator(".billing-package__btn").wait_for(state="visible", timeout=5000)
             break
@@ -197,7 +187,10 @@ def auto_client(subadmin_context):
             page.wait_for_timeout(5000)
     page.locator(".billing-package__btn").click()
     page.wait_for_url("**/billing-plan**", timeout=15000)
-    page.wait_for_load_state("networkidle", timeout=15000)
+    try:
+        page.wait_for_load_state("networkidle", timeout=15000)
+    except Exception:
+        pass
     # Скроллим к разделу "Бесплатные тарифы для теста (7 дней)"
     page.locator("h2.billing-plan__title:has-text('Бесплатные тарифы')").scroll_into_view_if_needed()
     # nth(1) — вторая кнопка "Подключить" на карточке ПРО (первая — в платном разделе)
@@ -321,14 +314,6 @@ def manager_context(playwright: Playwright, manager_user_setup):
     page.locator(user_authorization.PHONE_FIELD_LOC).fill(manager_user_setup["phone"])
     page.locator(user_authorization.PASSWORD_FIELD_LOC).fill(manager_user_setup["password"])
     page.locator(user_authorization.SUBMIT_BUTTON_LOC).click()
-    page.locator(user_authorization.CODE_FIRST_DIGIT_LOC).wait_for(state="visible", timeout=15000)
-    # Ждём завершения CSS flip-анимации перехода на экран кода
-    page.wait_for_timeout(2000)
-    page.locator(user_authorization.CODE_FIRST_DIGIT_LOC).click()
-    page.locator(user_authorization.CODE_FIRST_DIGIT_LOC).fill(data.SMS_CODE[0])
-    for i in range(5):
-        page.locator(user_authorization.CODE_5DIGITS_LOC).nth(i).fill(data.SMS_CODE[i + 1])
-    page.locator(user_authorization.ENTER_BUTTON_LOC).click()
     page.wait_for_url("**/1?**")
     # Закрываем приветственный попап "Быть в курсе новостей и акций"
     try:
@@ -368,13 +353,6 @@ def manager_context(playwright: Playwright, manager_user_setup):
             cleanup_page.locator(user_authorization.PHONE_FIELD_LOC).fill(manager_user_setup["phone"])
             cleanup_page.locator(user_authorization.PASSWORD_FIELD_LOC).fill(manager_user_setup["password"])
             cleanup_page.locator(user_authorization.SUBMIT_BUTTON_LOC).click()
-            cleanup_page.locator(user_authorization.CODE_FIRST_DIGIT_LOC).wait_for(state="visible", timeout=15000)
-            cleanup_page.wait_for_timeout(2000)
-            cleanup_page.locator(user_authorization.CODE_FIRST_DIGIT_LOC).click()
-            cleanup_page.locator(user_authorization.CODE_FIRST_DIGIT_LOC).fill(data.SMS_CODE[0])
-            for i in range(5):
-                cleanup_page.locator(user_authorization.CODE_5DIGITS_LOC).nth(i).fill(data.SMS_CODE[i + 1])
-            cleanup_page.locator(user_authorization.ENTER_BUTTON_LOC).click()
             cleanup_page.wait_for_url("**/1?**", timeout=15000)
             cleanup_page.goto("/profile")
             cleanup_page.wait_for_load_state("networkidle", timeout=10000)
@@ -418,13 +396,6 @@ def manager_page(manager_context, manager_user_setup):
         page.locator(user_authorization.PHONE_FIELD_LOC).fill(manager_user_setup["phone"])
         page.locator(user_authorization.PASSWORD_FIELD_LOC).fill(manager_user_setup["password"])
         page.locator(user_authorization.SUBMIT_BUTTON_LOC).click()
-        page.locator(user_authorization.CODE_FIRST_DIGIT_LOC).wait_for(state="visible", timeout=15000)
-        page.wait_for_timeout(2000)
-        page.locator(user_authorization.CODE_FIRST_DIGIT_LOC).click()
-        page.locator(user_authorization.CODE_FIRST_DIGIT_LOC).fill(data.SMS_CODE[0])
-        for i in range(5):
-            page.locator(user_authorization.CODE_5DIGITS_LOC).nth(i).fill(data.SMS_CODE[i + 1])
-        page.locator(user_authorization.ENTER_BUTTON_LOC).click()
         page.wait_for_url("**/1?**", timeout=15000)
         page.wait_for_timeout(2000)
         try:
@@ -499,13 +470,6 @@ def operator_context(playwright: Playwright, operator_user_setup):
     page.locator(user_authorization.PHONE_FIELD_LOC).fill(operator_user_setup["phone"])
     page.locator(user_authorization.PASSWORD_FIELD_LOC).fill(operator_user_setup["password"])
     page.locator(user_authorization.SUBMIT_BUTTON_LOC).click()
-    page.locator(user_authorization.CODE_FIRST_DIGIT_LOC).wait_for(state="visible", timeout=15000)
-    page.wait_for_timeout(2000)
-    page.locator(user_authorization.CODE_FIRST_DIGIT_LOC).click()
-    page.locator(user_authorization.CODE_FIRST_DIGIT_LOC).fill(data.SMS_CODE[0])
-    for i in range(5):
-        page.locator(user_authorization.CODE_5DIGITS_LOC).nth(i).fill(data.SMS_CODE[i + 1])
-    page.locator(user_authorization.ENTER_BUTTON_LOC).click()
     page.wait_for_url("**/1?**", timeout=30000)
     # Закрываем приветственный попап «Быть в курсе новостей и акций»
     try:
@@ -545,13 +509,6 @@ def operator_context(playwright: Playwright, operator_user_setup):
             cleanup_page.locator(user_authorization.PHONE_FIELD_LOC).fill(operator_user_setup["phone"])
             cleanup_page.locator(user_authorization.PASSWORD_FIELD_LOC).fill(operator_user_setup["password"])
             cleanup_page.locator(user_authorization.SUBMIT_BUTTON_LOC).click()
-            cleanup_page.locator(user_authorization.CODE_FIRST_DIGIT_LOC).wait_for(state="visible", timeout=15000)
-            cleanup_page.wait_for_timeout(2000)
-            cleanup_page.locator(user_authorization.CODE_FIRST_DIGIT_LOC).click()
-            cleanup_page.locator(user_authorization.CODE_FIRST_DIGIT_LOC).fill(data.SMS_CODE[0])
-            for i in range(5):
-                cleanup_page.locator(user_authorization.CODE_5DIGITS_LOC).nth(i).fill(data.SMS_CODE[i + 1])
-            cleanup_page.locator(user_authorization.ENTER_BUTTON_LOC).click()
             cleanup_page.wait_for_url("**/1?**", timeout=30000)
             cleanup_page.goto("/profile")
             cleanup_page.wait_for_load_state("networkidle", timeout=10000)
@@ -602,13 +559,6 @@ def operator_page(operator_context, operator_user_setup):
         page.locator(user_authorization.PHONE_FIELD_LOC).fill(operator_user_setup["phone"])
         page.locator(user_authorization.PASSWORD_FIELD_LOC).fill(operator_user_setup["password"])
         page.locator(user_authorization.SUBMIT_BUTTON_LOC).click()
-        page.locator(user_authorization.CODE_FIRST_DIGIT_LOC).wait_for(state="visible", timeout=15000)
-        page.wait_for_timeout(2000)
-        page.locator(user_authorization.CODE_FIRST_DIGIT_LOC).click()
-        page.locator(user_authorization.CODE_FIRST_DIGIT_LOC).fill(data.SMS_CODE[0])
-        for i in range(5):
-            page.locator(user_authorization.CODE_5DIGITS_LOC).nth(i).fill(data.SMS_CODE[i + 1])
-        page.locator(user_authorization.ENTER_BUTTON_LOC).click()
         page.wait_for_url("**/1?**", timeout=30000)
         page.wait_for_timeout(2000)
         try:

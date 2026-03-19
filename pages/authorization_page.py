@@ -14,25 +14,12 @@ class UserAuthorizationPage(BasePage):
          self.fill_text(locator.PHONE_FIELD_LOC, phone_number)
          self.fill_text(locator.PASSWORD_FIELD_LOC, password)
          self.click_on_elem(locator.SUBMIT_BUTTON_LOC)
-         self.wait_locator(locator.CODE_FIRST_DIGIT_LOC)
-         self.click_on_elem(locator.CODE_FIRST_DIGIT_LOC)
-         self.fill_text(locator.CODE_FIRST_DIGIT_LOC, data.SMS_CODE[0])
-         for i in range(5):
-             self.page.locator(locator.CODE_5DIGITS_LOC).nth(i).fill(data.SMS_CODE[i + 1])
-         self.click_on_elem(locator.ENTER_BUTTON_LOC)
          self.wait_url(data.BASE_URL + endpoint.FEEDBACK_PAGE_ENDPOINT)
 
     def authorization_user_wildcard(self, locator, phone_number, password):
          self.fill_text(locator.PHONE_FIELD_LOC, phone_number)
          self.fill_text(locator.PASSWORD_FIELD_LOC, password)
          self.click_on_elem(locator.SUBMIT_BUTTON_LOC)
-         self.wait_locator(locator.CODE_FIRST_DIGIT_LOC)
-         self.page.wait_for_timeout(1000)
-         self.page.locator(locator.CODE_FIRST_DIGIT_LOC).focus()
-         self.fill_text(locator.CODE_FIRST_DIGIT_LOC, data.SMS_CODE[0])
-         for i in range(5):
-             self.page.locator(locator.CODE_5DIGITS_LOC).nth(i).fill(data.SMS_CODE[i + 1])
-         self.page.locator("button.button-main", has_text="Войти в систему").last.click()
          self.page.wait_for_url("**/1?**")
 
     def authorization_with_wrong_password(self, locator, phone, wrong_password):
