@@ -20,7 +20,7 @@ endpoint = Endpoints()
 @pytest.fixture()
 def page(playwright: Playwright):
     browser = playwright.chromium.launch(headless=False, slow_mo=500)
-    context = browser.new_context(
+    context = browser.new_context(ignore_https_errors=True, 
         viewport=ViewportSize(width=1440, height=980),
         base_url="https://go.dev.spix.ru/"
     )
@@ -36,7 +36,7 @@ def get_cookies(playwright: Playwright):
     phone_number = data.PHONE_NUMBER
     password = data.PASSWORD
     browser = playwright.chromium.launch(headless=False)
-    context = browser.new_context(
+    context = browser.new_context(ignore_https_errors=True, 
         base_url='https://go.dev.spix.ru/'
     )
     page = context.new_page()
@@ -55,7 +55,7 @@ def get_cookies(playwright: Playwright):
 @pytest.fixture()
 def authorized_user(playwright: Playwright, get_cookies):
     browser = playwright.chromium.launch(headless=False, slow_mo=500)
-    context = browser.new_context(
+    context = browser.new_context(ignore_https_errors=True, 
         viewport=ViewportSize(width=1440, height=980),
         base_url="https://go.dev.spix.ru/"
     )
@@ -71,7 +71,7 @@ def authorized_user(playwright: Playwright, get_cookies):
 def subadmin_context(playwright: Playwright):
     """Авторизует субадмина один раз и хранит контекст на всю сессию"""
     browser = playwright.chromium.launch(headless=False, slow_mo=500)
-    context = browser.new_context(
+    context = browser.new_context(ignore_https_errors=True, 
         viewport=ViewportSize(width=1440, height=980),
         base_url="https://go.dev.spix.ru/"
     )
@@ -305,7 +305,7 @@ def manager_user_setup(subadmin_context, auto_client):
 def manager_context(playwright: Playwright, manager_user_setup):
     """Авторизует менеджера один раз и хранит контекст на всю сессию."""
     browser = playwright.chromium.launch(headless=False, slow_mo=500)
-    context = browser.new_context(
+    context = browser.new_context(ignore_https_errors=True, 
         viewport=ViewportSize(width=1440, height=980),
         base_url="https://go.dev.spix.ru/"
     )
@@ -461,7 +461,7 @@ def operator_context(playwright: Playwright, operator_user_setup):
     Закрывает попап «Быть в курсе новостей и акций». Устанавливает язык RU.
     """
     browser = playwright.chromium.launch(headless=False, slow_mo=500)
-    context = browser.new_context(
+    context = browser.new_context(ignore_https_errors=True, 
         viewport=ViewportSize(width=1440, height=980),
         base_url="https://go.dev.spix.ru/"
     )
@@ -577,7 +577,7 @@ def client_page(playwright: Playwright):
     """Авторизуется под субадмином, создаёт клиента, переходит к форме добавления пользователя"""
     manager_data = ManagerAuthData()
     browser = playwright.chromium.launch(headless=False, slow_mo=500)
-    context = browser.new_context(
+    context = browser.new_context(ignore_https_errors=True, 
         viewport=ViewportSize(width=1440, height=980),
         base_url="https://go.dev.spix.ru/"
     )
@@ -622,7 +622,7 @@ def managers_by_language(playwright: Playwright):
     managers = {}
 
     browser = playwright.chromium.launch(headless=False, slow_mo=500)
-    context = browser.new_context(
+    context = browser.new_context(ignore_https_errors=True, 
         viewport=ViewportSize(width=1440, height=980),
         base_url="https://go.dev.spix.ru/"
     )
