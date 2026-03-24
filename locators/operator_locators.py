@@ -18,7 +18,7 @@ class OperatorLocators:
     PROFILE_LOGOUT_BTN       = ".statistic__tools-btn:has-text('Выйти')"
 
     # ── Подтверждение выхода ──────────────────────────────────────────────
-    LOGOUT_CONFIRM_YES_BTN = "button.btns__confirm"
+    LOGOUT_CONFIRM_YES_BTN = "button.btns__confirm:has-text('Да')"
 
     # ── Шапка: dropdown переключения источника (Маркетплейсы / Карты) ────
     HEADER_SOURCE_BTN   = "button.custom-v-menu-options__btn"

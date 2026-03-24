@@ -45,28 +45,29 @@ class OperatorPage(BasePage):
 
     def click_my_profile(self, loc):
         """Кликает на 'Мой профиль' в выпадающем меню профиля."""
-        self.page.wait_for_timeout(700)
-        self.page.locator(loc.PROFILE_MY_PROFILE_BTN).click(force=True)
+        self.page.wait_for_timeout(300)
+        # evaluate не двигает мышь — CSS :hover на .initials остаётся активным,
+        # Vue Router перехватывает click и выполняет навигацию
+        self.page.locator(loc.PROFILE_MY_PROFILE_BTN).evaluate("el => el.click()")
 
     def click_support(self, loc):
         """Кликает на 'Написать в поддержку' в выпадающем меню профиля."""
         self.page.wait_for_timeout(300)
-        self.page.locator(loc.PROFILE_SUPPORT_BTN).click(force=True)
+        self.page.locator(loc.PROFILE_SUPPORT_BTN).evaluate("el => el.click()")
 
     def click_history(self, loc):
         """Кликает на 'История обработки' в выпадающем меню профиля."""
         self.page.wait_for_timeout(300)
-        self.page.locator(loc.PROFILE_HISTORY_BTN).click(force=True)
+        self.page.locator(loc.PROFILE_HISTORY_BTN).evaluate("el => el.click()")
 
     def click_logout(self, loc):
         """Кликает на 'Выход'/'Выйти' в выпадающем меню профиля."""
         self.page.wait_for_timeout(300)
-        self.page.locator(loc.PROFILE_LOGOUT_BTN).click(force=True)
+        self.page.locator(loc.PROFILE_LOGOUT_BTN).evaluate("el => el.click()")
 
     def click_confirm_logout(self, loc):
         """Кликает 'Да' в модальном окне подтверждения выхода."""
-        self.page.wait_for_timeout(300)
-        self.page.locator(loc.LOGOUT_CONFIRM_YES_BTN).click(force=True)
+        self.page.locator(loc.LOGOUT_CONFIRM_YES_BTN).evaluate("el => el.click()")
 
     # ── Открытие инструкций в новой вкладке ──────────────────────────────
 

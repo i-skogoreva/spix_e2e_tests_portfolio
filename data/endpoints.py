@@ -1,3 +1,9 @@
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+
 class Endpoints:
     AUTHORIZATION_USER_ENDPOINT = "/signin/"
     FEEDBACK_PAGE_ENDPOINT = "/1?feedbacks_tab=pending"
@@ -25,7 +31,7 @@ class Endpoints:
     STATISTIC_ENDPOINT = "/statistic"
 
     # ── REST API ──────────────────────────────────────────────────────────
-    BASE_URL = "https://go.dev.spix.ru"
+    BASE_URL = os.getenv("BASE_URL", "https://go.dev.spix.ru")
     API_PREFIX = "abc8db6ftXiaLdstybcfia7eftDo5ByfJabksduy6fba7sdbtfka"
     API_CLIENTS = f"/{API_PREFIX}/clients/"
     API_CLIENTS_LIST = f"/{API_PREFIX}/clients-list/0"   # полный список с billing + users
