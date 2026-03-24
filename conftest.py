@@ -1,15 +1,14 @@
 import uuid
+from urllib.parse import urlparse, parse_qs
 import pytest
 from playwright.sync_api import Playwright, ViewportSize
 from locators.authorization_locators import UserAuthorization
 from locators.clients_page_locators import ClientsPageLocators
-from locators.user_management_locators import UserManagementLocators
 from locators.profile_locators import ProfileLocators
 from data.dataclasses.user_dataclass import UserData
 from data.dataclasses.manager_auth_dataclass import ManagerAuthData
 from pages.authorization_page import UserAuthorizationPage
 from pages.clients_page import ClientsPage
-from pages.user_management_page import UserManagementPage
 from data.endpoints import Endpoints
 
 data = UserData()
@@ -575,10 +574,13 @@ def operator_page(operator_context, operator_user_setup):
 
 @pytest.fixture()
 def client_page(playwright: Playwright):
-    """Авторизуется под субадмином, создаёт клиента, переходит к форме добавления пользователя"""
+    """Авторизуется под субадмином, создаёт клиента, переходит к форме добавления пользователя.
+
+    Teardown: удаляет созданного клиента через API DELETE.
+    """
     manager_data = ManagerAuthData()
     browser = playwright.chromium.launch(headless=False, slow_mo=500)
-    context = browser.new_context(ignore_https_errors=True, 
+    context = browser.new_context(ignore_https_errors=True,
         viewport=ViewportSize(width=1440, height=980),
         base_url=f"{Endpoints.BASE_URL}/"
     )
@@ -605,76 +607,27 @@ def client_page(playwright: Playwright):
     )
 
     clients_page.click_first_client(manager_data.CLIENT_NAME)
+
+    # Извлекаем client_id из URL (формат: ?client_id=XX)
+    parsed = urlparse(page.url)
+    qs = parse_qs(parsed.query)
+    client_id = qs.get("client_id", [None])[0]
+
     clients_page.navigate_to_add_user(clients_locator)
 
     yield page
 
-    page.wait_for_timeout(3000)
-    page.close()
-    context.close()
-    browser.close()
-
-
-@pytest.fixture(scope="class")
-def managers_by_language(playwright: Playwright):
-    """Создаёт клиента с 3 менеджерами (по одному на каждый язык), возвращает dict {язык: (phone, password)}"""
-    user_mgmt_locator = UserManagementLocators()
-    languages = ["Русский", "English", "Indonesia"]
-    managers = {}
-
-    browser = playwright.chromium.launch(headless=False, slow_mo=500)
-    context = browser.new_context(ignore_https_errors=True, 
-        viewport=ViewportSize(width=1440, height=980),
-        base_url=f"{Endpoints.BASE_URL}/"
-    )
-    page = context.new_page()
-
-    full_url = data.BASE_URL + endpoint.AUTHORIZATION_USER_ENDPOINT
-    auth_page = UserAuthorizationPage(page, full_url)
-    auth_page.open()
-    auth_page.authorization_user_wildcard(
-        user_authorization,
-        data.SUBADMIN_PHONE_NUMBER,
-        data.SUBADMIN_PASSWORD
-    )
-
-    clients_url = data.BASE_URL + endpoint.CLIENTS_ENDPOINT
-    clients_page = ClientsPage(page, clients_url)
-    clients_page.open()
-    clients_page.wait_locator(clients_locator.ADD_CLIENT_BTN)
-
-    client_data = ManagerAuthData()
-    clients_page.create_client(
-        clients_locator,
-        client_data.CLIENT_NAME,
-        client_data.CLIENT_EMAIL
-    )
-    clients_page.click_first_client(client_data.CLIENT_NAME)
-    clients_page.navigate_to_add_user(clients_locator)
-
-    for lang in languages:
-        mgr = ManagerAuthData()
-        user_mgmt_page = UserManagementPage(page)
-        user_mgmt_page.create_user(
-            user_mgmt_locator,
-            mgr.MANAGER_NAME,
-            mgr.MANAGER_EMAIL,
-            mgr.MANAGER_PHONE,
-            mgr.MANAGER_PASSWORD,
-            "Менеджер"
-        )
-
-        user_mgmt_page.click_user_by_name(mgr.MANAGER_NAME)
-        user_mgmt_page.change_language(user_mgmt_locator, lang)
-        user_mgmt_page.click_save_edit()
-
-        managers[lang] = (mgr.MANAGER_PHONE, mgr.MANAGER_PASSWORD)
-
-        clients_page.navigate_to_add_user(clients_locator)
-
-    yield page, managers
+    # Teardown: удаляем клиента через API
+    if client_id:
+        try:
+            ep = Endpoints()
+            context.request.delete(f"{ep.BASE_URL}{ep.API_CLIENTS}{client_id}/")
+        except Exception:
+            pass
 
     page.wait_for_timeout(3000)
     page.close()
     context.close()
     browser.close()
+
+

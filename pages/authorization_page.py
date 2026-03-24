@@ -60,35 +60,13 @@ class UserAuthorizationPage(BasePage):
     def get_recover_pass_text(self, locator):
          return self.get_text(locator.RECOVER_PASS_LOC)
 
-    def submit_credentials(self, locator, phone_number, password):
-         self.fill_text(locator.PHONE_FIELD_LOC, phone_number)
-         self.fill_text(locator.PASSWORD_FIELD_LOC, password)
-         self.click_on_elem(locator.SUBMIT_BUTTON_LOC)
-         self.wait_locator(locator.CODE_FIRST_DIGIT_LOC)
-
-    def click_return_to_signin(self, locator):
-         self.click_on_elem(locator.RETURN_TO_SIGNIN_LOC)
-         self.wait_locator(locator.PHONE_LABEL_LOC)
-
-    def wait_resend_code_available(self, locator):
-         self.wait_locator(locator.RESEND_CODE_BTN_LOC, timeout=70000)
-
-    def click_resend_code(self, locator):
-         self.click_on_elem(locator.RESEND_CODE_BTN_LOC)
-         self.wait_locator(locator.CODE_SENT_LOC, timeout=30000)
-
-    def get_code_sent_text(self, locator):
-         return self.get_text(locator.CODE_SENT_LOC).strip()
-
-    def is_resend_timer_visible(self, locator):
-         return self.page.locator(locator.RESEND_TIMER_LOC).is_visible()
-
     def click_support_btn(self, locator):
          self.click_on_elem(locator.SUPPORT_BTN_LOC)
          self.wait_url("**/support-signin")
 
     def click_recover_pass(self, locator):
          self.click_on_elem(locator.RECOVER_PASS_LOC)
+         self.wait_url("**/pass-recovery")
 
     def click_recovery_return_to_signin(self, locator):
          self.click_on_elem(locator.RETURN_TO_SIGNIN_LOC)
@@ -104,12 +82,3 @@ class UserAuthorizationPage(BasePage):
 
     def get_recovery_email(self, locator):
          return self.get_text(locator.RECOVERY_EMAIL_LOC)
-
-    def get_sms_page_title(self, locator):
-         return self.page.locator(locator.SIGNIN_TITLE_LOC).last.text_content()
-
-    def get_sms_page_description(self, locator):
-         return self.page.locator(locator.SIGNIN_DESCRIPTION_LOC).last.text_content()
-
-    def get_sms_code_label(self, locator):
-         return self.get_text(locator.SMS_CODE_LABEL_LOC)
