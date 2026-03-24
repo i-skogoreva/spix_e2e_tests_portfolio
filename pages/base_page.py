@@ -85,3 +85,6 @@ class BasePage:
         state="visible",
         timeout=timeout
         )
+
+    def get_current_url(self):
+        return self.page.url

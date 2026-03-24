@@ -25,6 +25,10 @@ class Endpoints:
     COMPARISON_ANALYTICS_ENDPOINT = "/comparison-analytics"
     SETTINGS_PAGE_ENDPOINT = "/settings"
     SETTINGS_COMPANY_ENDPOINT = "/settings-company/settings"
+    SETTINGS_COMPANY_USERS_ENDPOINT = "/settings-company/users"
+    SETTINGS_COMPANY_BILLING_ENDPOINT = "/settings-company/billing"
+    BRANDS_ENDPOINT = "/brands/"                          # + {client_id} в пути
+    TEMPLATE_ANSWERS_ENDPOINT = "/settings/template-answers"
     STATISTIC_MONTH_ENDPOINT = "/statistic/month"
     # Базовый URL страницы статистики (для fresh-пользователей без истории /statistic/month
     # редиректит на /statistic, поэтому проверяем наличие /statistic в URL)

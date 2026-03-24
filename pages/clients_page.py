@@ -32,6 +32,37 @@ class ClientsPage(BasePage):
         self.page.locator(".item-cell", has_text=name).first.click()
         self.page.wait_for_url("**/settings-company/**")
 
+    def _click_client_action_btn(self, locator, client_name: str, btn_selector: str):
+        """Находит строку клиента по имени и кликает кнопку внутри неё."""
+        row = self.page.locator(".table-row").filter(
+            has=self.page.locator(".item-cell", has_text=client_name)
+        ).first
+        row.locator(btn_selector).click()
+
+    def click_client_reviews(self, locator, client_name: str):
+        self._click_client_action_btn(locator, client_name, locator.BTN_CLIENT_REVIEWS)
+
+    def click_client_products(self, locator, client_name: str):
+        self._click_client_action_btn(locator, client_name, locator.BTN_CLIENT_PRODUCTS)
+
+    def click_client_maps(self, locator, client_name: str):
+        self._click_client_action_btn(locator, client_name, locator.BTN_CLIENT_MAPS)
+
+    def click_client_brands(self, locator, client_name: str):
+        self._click_client_action_btn(locator, client_name, locator.BTN_CLIENT_BRANDS)
+
+    def click_client_templates(self, locator, client_name: str):
+        self._click_client_action_btn(locator, client_name, locator.BTN_CLIENT_TEMPLATES)
+
+    def click_client_users(self, locator, client_name: str):
+        self._click_client_action_btn(locator, client_name, locator.BTN_CLIENT_USERS)
+
+    def click_client_settings(self, locator, client_name: str):
+        self._click_client_action_btn(locator, client_name, locator.BTN_CLIENT_SETTINGS)
+
+    def click_client_billing(self, locator, client_name: str):
+        self._click_client_action_btn(locator, client_name, locator.BTN_CLIENT_BILLING)
+
     def navigate_to_add_user(self, locator):
         if "/users" not in self.page.url:
             self.click_on_elem(locator.USERS_TAB)

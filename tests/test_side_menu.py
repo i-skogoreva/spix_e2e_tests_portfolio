@@ -1,8 +1,10 @@
 import allure
 
 from locators.client_filter_locators import ClientFilterLocators
+from locators.clients_page_locators import ClientsPageLocators
 from locators.side_menu_locators import SideMenuLocators
 from locators.operator_locators import OperatorLocators
+from pages.clients_page import ClientsPage
 from pages.reviews_page import ReviewsPage
 from pages.side_menu_page import SideMenuPage
 from pages.operator_page import OperatorPage
@@ -20,7 +22,8 @@ class TestTS03SideMenu:
     menu_locator = SideMenuLocators()
     assertion = Assertions()
 
-    @allure.title("TC-0302s: Раскрытие подменю Отзывы. Широкое меню")
+    @allure.title("TC-0302s"
+                  ": Раскрытие подменю Отзывы. Широкое меню")
     @allure.description(
         "Доступно для клиентов с маркетплейсами и картами.\n"
         "Пририквизиты: субадмин авторизован на сайте, "
@@ -529,6 +532,220 @@ class TestTS03SideMenu:
             self.assertion.assert_true(
                 self.endpoints.AUTHORIZATION_USER_ENDPOINT.rstrip('/') in side_menu.get_current_url(),
                 f"URL не содержит {self.endpoints.AUTHORIZATION_USER_ENDPOINT}"
+            )
+
+    @allure.title("TC-0337s: Переход на страницу отзывов клиента со страницы Клиенты")
+    @allure.description(
+        "Предусловия: субадмин авторизован, тестовый клиент «Авто_тест» создан.\n"
+        "Шаги: 1. Открыть страницу Клиенты. "
+        "2. Кликнуть кнопку «Смотреть отзывы клиента» в строке «Авто_тест».\n"
+        "Критерий успеха: URL содержит /1, feedbacks_tab=pending и client_id клиента."
+    )
+    @allure.severity(allure.severity_level.NORMAL)
+    def test_tc_0337_client_reviews_from_clients_page(self, subadmin_page, auto_client):
+        clients_page = ClientsPage(
+            subadmin_page,
+            url=self.data.BASE_URL + self.endpoints.CLIENTS_PAGE_ENDPOINT
+        )
+        clients_locator = ClientsPageLocators()
+
+        with allure.step("Открыть страницу Клиенты"):
+            clients_page.open()
+        with allure.step("Кликнуть кнопку «Смотреть отзывы клиента» в строке клиента"):
+            clients_page.click_client_reviews(clients_locator, auto_client["nm"])
+        with allure.step("Проверить URL"):
+            clients_page.wait_url_contains("feedbacks_tab=pending")
+            url = clients_page.get_current_url()
+            self.assertion.assert_true(
+                f"client_id={auto_client['id']}" in url and "feedbacks_tab=pending" in url,
+                f"URL должен содержать client_id={auto_client['id']} и feedbacks_tab=pending"
+            )
+
+    @allure.title("TC-0338s: Переход на страницу товаров клиента со страницы Клиенты")
+    @allure.description(
+        "Предусловия: субадмин авторизован, тестовый клиент «Авто_тест» создан.\n"
+        "Шаги: 1. Открыть страницу Клиенты. "
+        "2. Кликнуть кнопку «Смотреть товары клиента» в строке «Авто_тест».\n"
+        "Критерий успеха: URL содержит /products/1 и client_id клиента."
+    )
+    @allure.severity(allure.severity_level.NORMAL)
+    def test_tc_0338_client_products_from_clients_page(self, subadmin_page, auto_client):
+        clients_page = ClientsPage(
+            subadmin_page,
+            url=self.data.BASE_URL + self.endpoints.CLIENTS_PAGE_ENDPOINT
+        )
+        clients_locator = ClientsPageLocators()
+
+        with allure.step("Открыть страницу Клиенты"):
+            clients_page.open()
+        with allure.step("Кликнуть кнопку «Смотреть товары клиента» в строке клиента"):
+            clients_page.click_client_products(clients_locator, auto_client["nm"])
+        with allure.step("Проверить URL"):
+            clients_page.wait_url_contains("/products/1")
+            url = clients_page.get_current_url()
+            self.assertion.assert_true(
+                "/products/1" in url and f"client_id={auto_client['id']}" in url,
+                f"URL должен содержать /products/1 и client_id={auto_client['id']}"
+            )
+
+    @allure.title("TC-0339s: Переход на страницу карт клиента со страницы Клиенты")
+    @allure.description(
+        "Предусловия: субадмин авторизован, тестовый клиент «Авто_тест» создан.\n"
+        "Шаги: 1. Открыть страницу Клиенты. "
+        "2. Кликнуть кнопку «Карты» в строке «Авто_тест».\n"
+        "Критерий успеха: URL содержит /pois/1 и client_id клиента."
+    )
+    @allure.severity(allure.severity_level.NORMAL)
+    def test_tc_0339_client_maps_from_clients_page(self, subadmin_page, auto_client):
+        clients_page = ClientsPage(
+            subadmin_page,
+            url=self.data.BASE_URL + self.endpoints.CLIENTS_PAGE_ENDPOINT
+        )
+        clients_locator = ClientsPageLocators()
+
+        with allure.step("Открыть страницу Клиенты"):
+            clients_page.open()
+        with allure.step("Кликнуть кнопку «Карты» в строке клиента"):
+            clients_page.click_client_maps(clients_locator, auto_client["nm"])
+        with allure.step("Проверить URL"):
+            clients_page.wait_url_contains("/pois/1")
+            url = clients_page.get_current_url()
+            self.assertion.assert_true(
+                "/pois/1" in url and f"client_id={auto_client['id']}" in url,
+                f"URL должен содержать /pois/1 и client_id={auto_client['id']}"
+            )
+
+    @allure.title("TC-0340s: Переход на страницу брендов клиента со страницы Клиенты")
+    @allure.description(
+        "Предусловия: субадмин авторизован, тестовый клиент «Авто_тест» создан.\n"
+        "Шаги: 1. Открыть страницу Клиенты. "
+        "2. Кликнуть кнопку «Смотреть бренды клиента» в строке «Авто_тест».\n"
+        "Критерий успеха: URL содержит /brands/{client_id} (id клиента в пути)."
+    )
+    @allure.severity(allure.severity_level.NORMAL)
+    def test_tc_0340_client_brands_from_clients_page(self, subadmin_page, auto_client):
+        clients_page = ClientsPage(
+            subadmin_page,
+            url=self.data.BASE_URL + self.endpoints.CLIENTS_PAGE_ENDPOINT
+        )
+        clients_locator = ClientsPageLocators()
+
+        with allure.step("Открыть страницу Клиенты"):
+            clients_page.open()
+        with allure.step("Кликнуть кнопку «Смотреть бренды клиента» в строке клиента"):
+            clients_page.click_client_brands(clients_locator, auto_client["nm"])
+        with allure.step("Проверить URL"):
+            url = clients_page.get_current_url()
+            self.assertion.assert_true(
+                f"/brands/{auto_client['id']}" in url,
+                f"URL должен содержать /brands/{auto_client['id']}"
+            )
+
+    @allure.title("TC-0341s: Переход в группу шаблонных ответов клиента со страницы Клиенты")
+    @allure.description(
+        "Предусловия: субадмин авторизован, тестовый клиент «Авто_тест» создан.\n"
+        "Шаги: 1. Открыть страницу Клиенты. "
+        "2. Кликнуть кнопку «Смотреть группы шаблонных ответов клиента» в строке «Авто_тест».\n"
+        "Критерий успеха: URL содержит /settings/template-answers и client_id клиента."
+    )
+    @allure.severity(allure.severity_level.NORMAL)
+    def test_tc_0341_client_templates_from_clients_page(self, subadmin_page, auto_client):
+        clients_page = ClientsPage(
+            subadmin_page,
+            url=self.data.BASE_URL + self.endpoints.CLIENTS_PAGE_ENDPOINT
+        )
+        clients_locator = ClientsPageLocators()
+
+        with allure.step("Открыть страницу Клиенты"):
+            clients_page.open()
+        with allure.step("Кликнуть кнопку «Шаблонные ответы» в строке клиента"):
+            clients_page.click_client_templates(clients_locator, auto_client["nm"])
+        with allure.step("Проверить URL"):
+            clients_page.wait_url_contains(self.endpoints.TEMPLATE_ANSWERS_ENDPOINT)
+            url = clients_page.get_current_url()
+            self.assertion.assert_true(
+                self.endpoints.TEMPLATE_ANSWERS_ENDPOINT in url and f"client_id={auto_client['id']}" in url,
+                f"URL должен содержать {self.endpoints.TEMPLATE_ANSWERS_ENDPOINT} и client_id={auto_client['id']}"
+            )
+
+    @allure.title("TC-0342s: Переход на страницу пользователей клиента со страницы Клиенты")
+    @allure.description(
+        "Предусловия: субадмин авторизован, тестовый клиент «Авто_тест» создан.\n"
+        "Шаги: 1. Открыть страницу Клиенты. "
+        "2. Кликнуть кнопку «Смотреть пользователей клиента» в строке «Авто_тест».\n"
+        "Критерий успеха: URL содержит /settings-company/users и client_id клиента."
+    )
+    @allure.severity(allure.severity_level.NORMAL)
+    def test_tc_0342_client_users_from_clients_page(self, subadmin_page, auto_client):
+        clients_page = ClientsPage(
+            subadmin_page,
+            url=self.data.BASE_URL + self.endpoints.CLIENTS_PAGE_ENDPOINT
+        )
+        clients_locator = ClientsPageLocators()
+
+        with allure.step("Открыть страницу Клиенты"):
+            clients_page.open()
+        with allure.step("Кликнуть кнопку «Пользователи» в строке клиента"):
+            clients_page.click_client_users(clients_locator, auto_client["nm"])
+        with allure.step("Проверить URL"):
+            clients_page.wait_url_contains(self.endpoints.SETTINGS_COMPANY_USERS_ENDPOINT)
+            url = clients_page.get_current_url()
+            self.assertion.assert_true(
+                self.endpoints.SETTINGS_COMPANY_USERS_ENDPOINT in url and f"client_id={auto_client['id']}" in url,
+                f"URL должен содержать {self.endpoints.SETTINGS_COMPANY_USERS_ENDPOINT} и client_id={auto_client['id']}"
+            )
+
+    @allure.title("TC-0343s: Переход в настройки компании клиента со страницы Клиенты")
+    @allure.description(
+        "Предусловия: субадмин авторизован, тестовый клиент «Авто_тест» создан.\n"
+        "Шаги: 1. Открыть страницу Клиенты. "
+        "2. Кликнуть кнопку «Настройки компании клиента» (gear) в строке «Авто_тест».\n"
+        "Критерий успеха: URL содержит /settings-company/settings и client_id клиента."
+    )
+    @allure.severity(allure.severity_level.NORMAL)
+    def test_tc_0343_client_settings_from_clients_page(self, subadmin_page, auto_client):
+        clients_page = ClientsPage(
+            subadmin_page,
+            url=self.data.BASE_URL + self.endpoints.CLIENTS_PAGE_ENDPOINT
+        )
+        clients_locator = ClientsPageLocators()
+
+        with allure.step("Открыть страницу Клиенты"):
+            clients_page.open()
+        with allure.step("Кликнуть кнопку «Настройки компании» в строке клиента"):
+            clients_page.click_client_settings(clients_locator, auto_client["nm"])
+        with allure.step("Проверить URL"):
+            url = clients_page.get_current_url()
+            self.assertion.assert_true(
+                self.endpoints.SETTINGS_COMPANY_ENDPOINT in url and f"client_id={auto_client['id']}" in url,
+                f"URL должен содержать {self.endpoints.SETTINGS_COMPANY_ENDPOINT} и client_id={auto_client['id']}"
+            )
+
+    @allure.title("TC-0344s: Переход в финансы клиента со страницы Клиенты")
+    @allure.description(
+        "Предусловия: субадмин авторизован, тестовый клиент «Авто_тест» создан.\n"
+        "Шаги: 1. Открыть страницу Клиенты. "
+        "2. Кликнуть кнопку «Финансы» (card-иконка) в строке «Авто_тест».\n"
+        "Критерий успеха: URL содержит /settings-company/billing и client_id клиента."
+    )
+    @allure.severity(allure.severity_level.NORMAL)
+    def test_tc_0344_client_billing_from_clients_page(self, subadmin_page, auto_client):
+        clients_page = ClientsPage(
+            subadmin_page,
+            url=self.data.BASE_URL + self.endpoints.CLIENTS_PAGE_ENDPOINT
+        )
+        clients_locator = ClientsPageLocators()
+
+        with allure.step("Открыть страницу Клиенты"):
+            clients_page.open()
+        with allure.step("Кликнуть кнопку «Финансы» в строке клиента"):
+            clients_page.click_client_billing(clients_locator, auto_client["nm"])
+        with allure.step("Проверить URL"):
+            clients_page.wait_url_contains(self.endpoints.SETTINGS_COMPANY_BILLING_ENDPOINT)
+            url = clients_page.get_current_url()
+            self.assertion.assert_true(
+                self.endpoints.SETTINGS_COMPANY_BILLING_ENDPOINT in url and f"client_id={auto_client['id']}" in url,
+                f"URL должен содержать {self.endpoints.SETTINGS_COMPANY_BILLING_ENDPOINT} и client_id={auto_client['id']}"
             )
 
 
