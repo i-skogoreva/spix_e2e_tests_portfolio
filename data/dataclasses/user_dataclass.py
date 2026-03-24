@@ -4,7 +4,7 @@ import os
 load_dotenv()
 
 class UserData:
-    BASE_URL = "https://go.dev.spix.ru"
+    BASE_URL = os.getenv("BASE_URL", "https://go.dev.spix.ru")
     SUBADMIN_PHONE_NUMBER = os.getenv("SUBADMIN_PHONE_NUMBER")
     SUBADMIN_PASSWORD = os.getenv("SUBADMIN_PASSWORD")
     MANAGER_PHONE_NUMBER = os.getenv("MANAGER_PHONE_NUMBER")

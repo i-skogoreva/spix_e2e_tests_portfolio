@@ -22,7 +22,7 @@ def page(playwright: Playwright):
     browser = playwright.chromium.launch(headless=False, slow_mo=500)
     context = browser.new_context(ignore_https_errors=True, 
         viewport=ViewportSize(width=1440, height=980),
-        base_url="https://go.dev.spix.ru/"
+        base_url=f"{Endpoints.BASE_URL}/"
     )
     page = context.new_page()
     yield page
@@ -36,8 +36,9 @@ def get_cookies(playwright: Playwright):
     phone_number = data.PHONE_NUMBER
     password = data.PASSWORD
     browser = playwright.chromium.launch(headless=False)
-    context = browser.new_context(ignore_https_errors=True, 
-        base_url='https://go.dev.spix.ru/'
+    context = browser.new_context(
+        ignore_https_errors=True,
+        base_url=f"{Endpoints.BASE_URL}/"
     )
     page = context.new_page()
     page.goto('/')
@@ -57,7 +58,7 @@ def authorized_user(playwright: Playwright, get_cookies):
     browser = playwright.chromium.launch(headless=False, slow_mo=500)
     context = browser.new_context(ignore_https_errors=True, 
         viewport=ViewportSize(width=1440, height=980),
-        base_url="https://go.dev.spix.ru/"
+        base_url=f"{Endpoints.BASE_URL}/"
     )
     context.add_cookies(get_cookies)
     page = context.new_page()
@@ -73,7 +74,7 @@ def subadmin_context(playwright: Playwright):
     browser = playwright.chromium.launch(headless=False, slow_mo=500)
     context = browser.new_context(ignore_https_errors=True, 
         viewport=ViewportSize(width=1440, height=980),
-        base_url="https://go.dev.spix.ru/"
+        base_url=f"{Endpoints.BASE_URL}/"
     )
     page = context.new_page()
     page.goto("/", timeout=60000)
@@ -307,7 +308,7 @@ def manager_context(playwright: Playwright, manager_user_setup):
     browser = playwright.chromium.launch(headless=False, slow_mo=500)
     context = browser.new_context(ignore_https_errors=True, 
         viewport=ViewportSize(width=1440, height=980),
-        base_url="https://go.dev.spix.ru/"
+        base_url=f"{Endpoints.BASE_URL}/"
     )
     page = context.new_page()
     page.goto("/", timeout=60000)
@@ -463,7 +464,7 @@ def operator_context(playwright: Playwright, operator_user_setup):
     browser = playwright.chromium.launch(headless=False, slow_mo=500)
     context = browser.new_context(ignore_https_errors=True, 
         viewport=ViewportSize(width=1440, height=980),
-        base_url="https://go.dev.spix.ru/"
+        base_url=f"{Endpoints.BASE_URL}/"
     )
     page = context.new_page()
     page.goto("/", timeout=60000)
@@ -579,7 +580,7 @@ def client_page(playwright: Playwright):
     browser = playwright.chromium.launch(headless=False, slow_mo=500)
     context = browser.new_context(ignore_https_errors=True, 
         viewport=ViewportSize(width=1440, height=980),
-        base_url="https://go.dev.spix.ru/"
+        base_url=f"{Endpoints.BASE_URL}/"
     )
     page = context.new_page()
 
@@ -624,7 +625,7 @@ def managers_by_language(playwright: Playwright):
     browser = playwright.chromium.launch(headless=False, slow_mo=500)
     context = browser.new_context(ignore_https_errors=True, 
         viewport=ViewportSize(width=1440, height=980),
-        base_url="https://go.dev.spix.ru/"
+        base_url=f"{Endpoints.BASE_URL}/"
     )
     page = context.new_page()
 
