@@ -7,6 +7,7 @@ from locators.clients_page_locators import ClientsPageLocators
 from locators.profile_locators import ProfileLocators
 from data.dataclasses.user_dataclass import UserData
 from data.dataclasses.manager_auth_dataclass import ManagerAuthData
+from data.dataclasses.finance_management_dataclass import FinanceManagementData
 from pages.authorization_page import UserAuthorizationPage
 from pages.clients_page import ClientsPage
 from data.endpoints import Endpoints
@@ -260,6 +261,93 @@ def auto_client(subadmin_context):
         subadmin_context.request.delete(f"{base}{ep.API_CLIENTS}{client_id}/")
     except Exception:
         pass
+
+
+@pytest.fixture(scope="session")
+def demo_client(subadmin_context):
+    """Создаёт клиента через UI БЕЗ смены тарифа (остаётся Демо).
+
+    Setup:
+      1. Создаём клиента на странице /clients
+      2. Получаем id через API /clients-list/0
+
+    Teardown: удаляет клиента через API DELETE.
+    """
+    ep = Endpoints()
+    base = ep.BASE_URL
+    fm_data = FinanceManagementData()
+    client_nm = fm_data.CLIENT_NAME
+    client_email = fm_data.CLIENT_EMAIL
+    page = subadmin_context.new_page()
+
+    # ── 1. Создаём клиента — кнопка "+" на странице Клиенты ──────────────
+    page.goto(f"{base}{ep.CLIENTS_PAGE_ENDPOINT}", timeout=30000)
+    try:
+        page.wait_for_load_state("networkidle", timeout=15000)
+    except Exception:
+        pass
+    # Закрываем попап, если он появился
+    try:
+        page.locator("button:has-text('В другой раз')").click(timeout=3000)
+        page.wait_for_timeout(300)
+    except Exception:
+        pass
+    page.locator(".sticky-btns-container button").last.click(timeout=10000)
+    page.locator("input[placeholder='Введите название клиента']").wait_for(
+        state="visible", timeout=10000
+    )
+    page.locator("input[placeholder='Введите название клиента']").fill(client_nm)
+    page.locator("input[placeholder='Введите email клиента']").fill(client_email)
+    page.locator("button:has-text('Добавить')").click()
+    page.wait_for_timeout(3000)
+
+    # ── 2. Получаем ID созданного клиента через API ───────────────────────
+    clients_resp = subadmin_context.request.get(f"{base}{ep.API_CLIENTS_LIST}")
+    all_clients = clients_resp.json()
+    if isinstance(all_clients, dict):
+        all_clients = all_clients.get("clients", [])
+    client_data = next((c for c in all_clients if c.get("nm") == client_nm), None)
+    assert client_data, f"Клиент {client_nm!r} не найден в ответе API"
+    client_id = client_data["id"]
+    page.close()
+
+    yield {"id": client_id, "nm": client_nm}
+
+    # ── TEARDOWN: удаляем клиента через API ──────────────────────────────
+    try:
+        subadmin_context.request.delete(f"{base}{ep.API_CLIENTS}{client_id}/")
+    except Exception:
+        pass
+
+
+@pytest.fixture()
+def demo_subadmin_page(subadmin_context, demo_client):
+    """Страница субадмина для тестов, НЕ зависящих от auto_client.
+
+    Использует demo_client вместо auto_client. Логика восстановления
+    сессии аналогична subadmin_page.
+    """
+    ep = Endpoints()
+    session_ok = False
+    try:
+        me_resp = subadmin_context.request.get(f"{ep.BASE_URL}{ep.API_USERS_ME}")
+        resp_data = me_resp.json()
+        session_ok = isinstance(resp_data, dict) and resp_data.get("user") is not None
+    except Exception:
+        session_ok = False
+
+    page = subadmin_context.new_page()
+    if not session_ok:
+        page.goto("/", timeout=60000)
+        page.locator(user_authorization.PHONE_FIELD_LOC).fill(data.SUBADMIN_PHONE_NUMBER)
+        page.locator(user_authorization.PASSWORD_FIELD_LOC).fill(data.SUBADMIN_PASSWORD)
+        page.locator(user_authorization.SUBMIT_BUTTON_LOC).click()
+        page.wait_for_url("**/1?**", timeout=30000)
+        page.close()
+        page = subadmin_context.new_page()
+
+    yield page
+    page.close()
 
 
 @pytest.fixture(scope="session")
