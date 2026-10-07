@@ -109,7 +109,7 @@ def subadmin_page(subadmin_context, auto_client):
     """Создаёт новую страницу в уже авторизованном контексте субадмина.
 
     Зависит от auto_client, чтобы тестовый клиент был создан до первого теста.
-    Если сессия истекла (например, после TC-0317s выполнившего выход),
+    Если сессия истекла,
     выполняет повторную авторизацию перед созданием страницы.
     """
     ep = Endpoints()
@@ -151,8 +151,8 @@ def auto_client(subadmin_context):
     """
     ep = Endpoints()
     base = ep.BASE_URL
-    client_nm = "Авто_тест"
-    client_email = "auto@spix.im"
+    client_nm = "TestClient"
+    client_email = "auto@example.com"
     page = subadmin_context.new_page()
 
     # ── 1. Создаём клиента — кнопка "+" на странице Клиенты ──────────────
@@ -354,7 +354,7 @@ def demo_subadmin_page(subadmin_context, demo_client):
 def manager_user_setup(subadmin_context, auto_client):
     """Создаёт пользователя с ролью менеджер через API и возвращает его credentials.
 
-    Генерирует уникальный телефон (+70001XXXXXX) и email (manager_XXXXXXXX@spix.im)
+    Генерирует уникальный телефон (+70001XXXXXX) и email (manager_XXXXXXXX@example.com)
     чтобы каждый запуск создавал нового пользователя без конфликтов.
     """
     ep = Endpoints()
@@ -363,12 +363,12 @@ def manager_user_setup(subadmin_context, auto_client):
     uid      = uuid.uuid4()
     phone    = f"+70001{uid.int % 1000000:06d}"
     password = data.MANAGER_PASSWORD or "TestPass123!"
-    email    = f"manager_{uid.hex[:8]}@spix.im"
+    email    = f"manager_{uid.hex[:8]}@example.com"
 
     resp = subadmin_context.request.post(
         f"{base}{ep.API_USERS}",
         data={
-            "nm":            "Менеджер Тест",
+            "nm":            "Test Manager",
             "phone":         phone,
             "email":         email,
             "pass":          password,
@@ -436,7 +436,7 @@ def manager_context(playwright: Playwright, manager_user_setup):
         cleanup_page.goto("/profile")
         cleanup_page.wait_for_load_state("networkidle", timeout=10000)
 
-        # Если сессия истекла (TC-0317m выполнил выход), повторно авторизуемся
+        # Если сессия истекла, повторно авторизуемся
         if ep.AUTHORIZATION_USER_ENDPOINT.rstrip("/") in cleanup_page.url:
             cleanup_page.locator(user_authorization.PHONE_FIELD_LOC).fill(manager_user_setup["phone"])
             cleanup_page.locator(user_authorization.PASSWORD_FIELD_LOC).fill(manager_user_setup["password"])
@@ -463,7 +463,7 @@ def manager_context(playwright: Playwright, manager_user_setup):
 def manager_page(manager_context, manager_user_setup):
     """Создаёт новую страницу в уже авторизованном контексте менеджера.
 
-    Если сессия истекла (например, после TC-0317m выполнившего выход),
+    Если сессия истекла,
     выполняет повторную авторизацию перед созданием страницы.
     Проверка сессии: /users/me должен вернуть JSON с ключом 'user'.
     """
@@ -505,7 +505,7 @@ def manager_page(manager_context, manager_user_setup):
 def operator_user_setup(subadmin_context, auto_client):
     """Создаёт пользователя с ролью operator через API и возвращает его credentials.
 
-    Генерирует уникальный телефон (+70002XXXXXX) и email (operator_XXXXXXXX@spix.im).
+    Генерирует уникальный телефон (+70002XXXXXX) и email (operator_XXXXXXXX@example.com).
     Префикс +70002 отличается от менеджерского +70001 для исключения коллизий.
     """
     ep = Endpoints()
@@ -514,12 +514,12 @@ def operator_user_setup(subadmin_context, auto_client):
     uid      = uuid.uuid4()
     phone    = f"+70002{uid.int % 1000000:06d}"
     password = data.OPERATOR_PASSWORD or "TestPass123!"
-    email    = f"operator_{uid.hex[:8]}@spix.im"
+    email    = f"operator_{uid.hex[:8]}@example.com"
 
     resp = subadmin_context.request.post(
         f"{base}{ep.API_USERS}",
         data={
-            "nm":            "Оператор Тест",
+            "nm":            "Test Operator",
             "phone":         phone,
             "email":         email,
             "pass":          password,
@@ -592,7 +592,7 @@ def operator_context(playwright: Playwright, operator_user_setup):
         cleanup_page.goto("/profile")
         cleanup_page.wait_for_load_state("networkidle", timeout=10000)
 
-        # Если сессия истекла (TC-03007o выполнил выход) — повторно авторизуемся
+        # Если сессия истекла — повторно авторизуемся
         if ep.AUTHORIZATION_USER_ENDPOINT.rstrip("/") in cleanup_page.url:
             cleanup_page.locator(user_authorization.PHONE_FIELD_LOC).fill(operator_user_setup["phone"])
             cleanup_page.locator(user_authorization.PASSWORD_FIELD_LOC).fill(operator_user_setup["password"])
@@ -619,7 +619,7 @@ def operator_context(playwright: Playwright, operator_user_setup):
 def operator_page(operator_context, operator_user_setup):
     """Создаёт новую страницу в уже авторизованном контексте оператора.
 
-    Если сессия истекла (например, после TC-03007o выполнившего выход),
+    Если сессия истекла,
     выполняет повторную авторизацию перед созданием страницы.
     """
     ep = Endpoints()

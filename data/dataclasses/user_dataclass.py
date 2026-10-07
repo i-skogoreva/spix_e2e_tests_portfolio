@@ -4,7 +4,7 @@ import os
 load_dotenv()
 
 class UserData:
-    BASE_URL = os.getenv("BASE_URL", "https://go.dev.spix.ru")
+    BASE_URL = os.getenv("BASE_URL", "https://example.com")
     SUBADMIN_PHONE_NUMBER = os.getenv("SUBADMIN_PHONE_NUMBER")
     SUBADMIN_PASSWORD = os.getenv("SUBADMIN_PASSWORD")
     MANAGER_PHONE_NUMBER = os.getenv("MANAGER_PHONE_NUMBER")
@@ -14,10 +14,10 @@ class UserData:
     WRONG_PASSWORD = "WrongPassword123!"
     WRONG_PHONE_NUMBER = "+7 0001112233"
     ERROR_MESSAGE_PASSWORD = "Incorrect username or password"
-    KAZAKHSTAN_PHONE_PLACEHOLDER = "+7 771 000 9998"
+    KAZAKHSTAN_PHONE_PLACEHOLDER = "+7 700 000 0000"
     KAZAKHSTAN_FLAG_CLASS = "vti__flag kz"
-    CLIENT_LAYKOVY = "Лайковый клиент"
-    RECOVERY_EMAIL = "test@spix.im"
+    CLIENT_LAYKOVY = "Test Client"
+    RECOVERY_EMAIL = "test@example.com"
     RECOVERY_CONFIRMATION_TEXT = "На ваш email отправлена ссылка для восстановления пароля. Перейдите по ссылке и введите новый пароль."
 
     LANG_TRANSLATIONS = {
